@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="js/main.js"></script>
+    <title>Backjack</title>
+</head>
+<body>
+    <h1>Backjack</h1>
+    <section id="left-board">
+        <div>Current money</div>
+        <section id="chips">
+            <button id="chip-value5"><img src="assets/chip5.png"></button>
+            <button id="chip-value10"><img src="assets/chip10.png"></button>
+            <button id="chip-value25"><img src="assets/chip25.png"></button>
+            <button id="chip-value50"><img src="assets/chip50.png"></button>
+            <button id="chip-value100"><img src="assets/chip100.png"></button>
+        </section>
+        <button class="gameplay-button">Bet</button>
+        <button class="gameplay-button">All in</button>
+    </section>
+
+    <section id="main-board">
+        <div id="dealers-cards">
+            <div id="dealer-card1">d1</div>
+            <div id="dealer-card2">d2</div>
+            <div id="dealer-card3">d3</div>
+            <div id="dealer-card4">d4</div>
+            <div id="dealer-card5">d5</div>
+        </div>
+            <div id="pot">Pot image</div>
+        <div id="players-cards">
+            <div id="player-card1">p1</div>
+            <div id="player-card2">p2</div>
+            <div id="player-card3">p2</div>
+            <div id="player-card4">p2</div>
+            <div id="player-card5">p5</div>
+        </div>
+        <div id="gameplay-buttons-container">
+            <button class="gameplay-button">Hit</button>
+            <button class="gameplay-button">Double</button>
+            <button class="gameplay-button">Stand</button>
+        </div>
+    </section>
+
+    <section id="right-board">
+        <div>Scores</div>
+        <div>Compter has won: </div>
+        <div>You have won: </div>
+    </section>
+
+</body>
+</html>
