@@ -35,6 +35,7 @@ const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', '
 /*----- state variables -----*/
 let currentPot = 0;
 let currentBank = 1000;
+let cards = '';
 
 /*----- cached elements  -----*/
 const buttonElements = {
@@ -54,9 +55,25 @@ const chipElements = {
     chipValue100: document.getElementById('chip-value100'),
 }
 
-const moneyElements ={
+const moneyElements = {
     potElement: document.getElementById('current-pot'),
     bankElement: document.getElementById('current-bank')
+}
+
+const dealersCards = {
+    first: document.getElementById('dealer-card1'),
+    second: document.getElementById('dealer-card2'),
+    third: document.getElementById('dealer-card3'),
+    fourth: document.getElementById('dealer-card4'),
+    fifth: document.getElementById('dealer-card5'),
+}
+
+const playersCards = {
+    first: document.getElementById('player-card1'),
+    second: document.getElementById('player-card2'),
+    third: document.getElementById('player-card3'),
+    fourth: document.getElementById('player-card4'),
+    fifth: document.getElementById('player-card5'),
 }
  
 
@@ -73,22 +90,28 @@ chipElements.chipValue100.addEventListener('click', moveMoney);
 
 buttonElements.clearBetButton.addEventListener('click', clearBet);
 buttonElements.allInButton.addEventListener('click', allIn);
+buttonElements.betButton.addEventListener('click', betAndStartRound);
 
 /*----- functions -----*/
-function buildOriginalDeck () {
-    const deck = [];
+init()
+
+function init(){
+    cards = buildDeck()
+    console.log(cards[0].face)
+    // dealersCards.first.setAttribute("class", `card ${cards[0].face}`)
+}
+
+function buildDeck () {
+    const originalDeck = [];
     suits.forEach((suit) => {
         ranks.forEach((rank) => {
-            deck.push({
+            originalDeck.push({
                 face: suit + rank,
                 value: Number(rank) || (rank === 'A' ? 11 : 10)
             });
         });
     }); 
-    return deck;
-}
 
-function shuffleDeck () {
     const shuffled = [...originalDeck]; // make a copy
     shuffled.sort(() => 0.5 - Math.random()); // randomly return negative or positive number
     return shuffled;
@@ -130,7 +153,7 @@ function deductMoneyFromBank(amount){
 
 function clearBet(){
     currentPot = 0;
-    //TO DO: Factor in how much money has been lost/or gained before resetting bank to zero
+    //TO DO: Factor in how much money has been lost/or gained before resetting bank to 1000
     currentBank = 1000;
     moneyElements.potElement.innerText = 0;
     moneyElements.bankElement.innerText = 1000;
@@ -141,4 +164,11 @@ function allIn(){
     currentBank = 0;
     moneyElements.potElement.innerText = currentPot;
     moneyElements.bankElement.innerText = currentBank;
+}
+
+function betAndStartRound(){
+    playersCards.first.setAttribute("class", `card ${cards[0].face}`);
+    dealersCards.first.setAttribute("class", `card ${cards[1].face}`);
+    playersCards.second.setAttribute("class", `card ${cards[2].face}`);
+    dealersCards.second.setAttribute("class", `card ${cards[3].face}`);
 }
