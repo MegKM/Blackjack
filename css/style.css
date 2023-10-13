@@ -6,7 +6,8 @@
 
 body {
     display: grid;
-    grid-template-columns: 1fr, 2fr, 1fr;
+    grid-template-columns: 300px 1fr 300px;
+    grid-template-rows: 100px 1fr 1fr;
     background-color: rgb(50, 141, 50);
 }
 
@@ -19,6 +20,7 @@ h1 {
 
 #main-board {
     grid-column: 2;
+    grid-row: 2 / span 2;
     min-height: 100vh;
     margin: 0;
     display: flex;
@@ -27,21 +29,32 @@ h1 {
 }
 
 #left-board, #right-board {
-    height: 50vh;
+    display: grid;
+    align-content: start;
+    grid-row: 2;
     border: 2vmin solid rgb(88, 56, 20);
 }
 
 #left-board {
     grid-column: 1;
+    padding: 1vmin;
 }
 
 #right-board {
     grid-column: 3;
+    padding: 1vmin;
 }
 
 #chips {
     display: flex;
     flex-wrap: wrap;
+    padding-bottom: 2vmin;
+}
+
+#buttons-below-chips {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 #players-cards > div, #dealers-cards > div{
@@ -77,6 +90,7 @@ h1 {
     background-color: rgb(0, 0, 136);
     border-radius: 25%;
     color: whitesmoke;
+    min-width: 10vmin;
 }
 
 .gameplay-button:hover {
@@ -95,18 +109,20 @@ h1 {
 #chips > button {
     border-radius: 100%;
     background-color: rgb(50, 141, 50);
-    border: none;
-    width: 10vmin;
-    padding: 1vmin;
-    margin: 1vmin;
+    border: 1px solid rgb(50, 141, 50);
+    width: 12vmin;
+    height: 12vmin;
+}
+
+#chips > button:hover {
+    cursor: pointer;
+    box-shadow: 20px 20px 20px 30px #c3c3c3 inset;
 }
 
 img {
     height: 10vmin;
+    align-self: center;
 }
-
-
-
 
 
 
