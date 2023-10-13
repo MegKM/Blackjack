@@ -36,6 +36,7 @@ const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', '
 let currentPot = 0;
 let currentBank = 1000;
 let cards = '';
+let totalCardsPlayed = 4;
 
 /*----- cached elements  -----*/
 const buttonElements = {
@@ -78,27 +79,31 @@ const playersCards = {
  
 
 /*----- event listeners -----*/
-document.querySelector('body').addEventListener('click', function (event){
-    // console.log(event.target);
-})
+function activateBettingEventListerners(){
+    chipElements.chipValue05.addEventListener('click', moveMoney);
+    chipElements.chipValue10.addEventListener('click', moveMoney);
+    chipElements.chipValue25.addEventListener('click', moveMoney);
+    chipElements.chipValue50.addEventListener('click', moveMoney);
+    chipElements.chipValue100.addEventListener('click', moveMoney);
 
-chipElements.chipValue05.addEventListener('click', moveMoney);
-chipElements.chipValue10.addEventListener('click', moveMoney);
-chipElements.chipValue25.addEventListener('click', moveMoney);
-chipElements.chipValue50.addEventListener('click', moveMoney);
-chipElements.chipValue100.addEventListener('click', moveMoney);
+    buttonElements.clearBetButton.addEventListener('click', clearBet);
+    buttonElements.allInButton.addEventListener('click', allIn);
+    buttonElements.dealButton.addEventListener('click', dealCards);
+}
 
-buttonElements.clearBetButton.addEventListener('click', clearBet);
-buttonElements.allInButton.addEventListener('click', allIn);
-buttonElements.dealButton.addEventListener('click', betAndStartRound);
+function activateGameplayEventListerners(){
+    buttonElements.hitButton.addEventListener('click', playerTakesCard);
+    buttonElements.doubleButton.addEventListener('click', double);
+    buttonElements.standButton.addEventListener('click', playerStands);
+}
 
 /*----- functions -----*/
 init()
 
 function init(){
-    cards = buildDeck()
-    console.log(cards[0].face)
-    // dealersCards.first.setAttribute("class", `card ${cards[0].face}`)
+    cards = buildDeck();
+    activateBettingEventListerners();
+    activateGameplayEventListerners();
 }
 
 function buildDeck () {
@@ -112,8 +117,8 @@ function buildDeck () {
         });
     }); 
 
-    const shuffled = [...originalDeck]; // make a copy
-    shuffled.sort(() => 0.5 - Math.random()); // randomly return negative or positive number
+    const shuffled = [...originalDeck];
+    shuffled.sort(() => 0.5 - Math.random());
     return shuffled;
 }
 
@@ -166,9 +171,100 @@ function allIn(){
     moneyElements.bankElement.innerText = currentBank;
 }
 
-function betAndStartRound(){
+function dealCards(){
+    if(currentPot === 0){
+        return;
+    }
+
+    removeBettingEventListerners();
+
     playersCards.first.setAttribute("class", `card large ${cards[0].face}`);
     dealersCards.first.setAttribute("class", `card large ${cards[1].face}`);
     playersCards.second.setAttribute("class", `card large ${cards[2].face}`);
-    dealersCards.second.setAttribute("class", `card large ${cards[3].face}`);
+
+    let cardSuit = cards[3].face.slice(0,1);
+    if(cardSuit === 's' || cardSuit === 'c'){
+        cardSuit = "back-blue"
+    }else{
+        cardSuit= "back-red"
+    }
+
+    dealersCards.second.setAttribute("class", `card large ${cardSuit}`);
+}
+
+function playerTakesCard(){
+    if (playersCards.first.getAttribute("class") === 'empty'){
+        return;
+    }
+
+    if (playersCards.third.getAttribute("class") === "empty"){
+        playersCards.third.setAttribute("class", `card large ${cards[4].face}`)
+        totalCardsPlayed += 1 
+        if(checkIfPlayerBust()) {roundOver()};
+    }
+    else if (playersCards.fourth.getAttribute("class") === "empty"){
+        playersCards.fourth.setAttribute("class", `card large ${cards[5].face}`)
+        totalCardsPlayed += 1 
+        if(checkIfPlayerBust()) {roundOver()};
+    }
+    else if (playersCards.fifth.getAttribute("class") === "empty"){
+        playersCards.fifth.setAttribute("class", `card large ${cards[6].face}`)
+        totalCardsPlayed += 1 
+        console.log(totalCardsPlayed)
+        if(checkIfPlayerBust()) {roundOver()};
+    }
+    else{
+        buttonElements.hitButton.removeEventListener('click', playerTakesCard);
+    }
+}
+
+function dealerTakesCard(){
+
+}
+
+function checkIfPlayerBust(){
+    return false;
+}
+
+function roundOver(){
+    console.log("seems okay")
+
+}
+
+function removeBettingEventListerners(){
+    buttonElements.allInButton.removeEventListener('click', allIn);
+    buttonElements.clearBetButton.removeEventListener('click', clearBet);
+    buttonElements.dealButton.removeEventListener('click', dealCards);
+    chipElements.chipValue05.removeEventListener('click', moveMoney);
+    chipElements.chipValue10.removeEventListener('click', moveMoney);
+    chipElements.chipValue25.removeEventListener('click', moveMoney);
+    chipElements.chipValue50.removeEventListener('click', moveMoney);
+    chipElements.chipValue100.removeEventListener('click', moveMoney);
+}
+
+function removeGameplayEventListeners(){
+    buttonElements.hitButton.removeEventListener('click', playerTakesCard);
+    buttonElements.doubleButton.removeEventListener('click', double);
+    buttonElements.standButton.removeEventListener('click', playerStands);
+}
+
+function double(){
+    if (playersCards.first.getAttribute("class") === 'empty'){
+        return;
+    }
+
+    if (playersCards.third.getAttribute("class") === "empty"){
+        playersCards.third.setAttribute("class", `card large ${cards[4].face}`)
+        totalCardsPlayed += 1 
+        if(checkIfPlayerBust()) {roundOver()};
+        currentPot *= 2;
+        moneyElements.potElement.innerText = currentPot;
+        removeBettingEventListerners();
+        removeGameplayEventListeners();
+    }
+
+}
+
+function playerStands(){
+
 }
