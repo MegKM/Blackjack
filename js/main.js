@@ -37,6 +37,11 @@ let currentPot = 0;
 let currentBank = 1000;
 let cards = '';
 let totalCardsPlayed = 4;
+const playersHand = [];
+const dealersHand = [];
+let playerHasBlackjack = false;
+let dealerHasBlackjack = false;
+const dealerRestsAmount = 17;
 
 /*----- cached elements  -----*/
 const buttonElements = {
@@ -179,8 +184,11 @@ function dealCards(){
     removeBettingEventListerners();
 
     playersCards.first.setAttribute("class", `card large ${cards[0].face}`);
+    playersHand.push(cards[0].value);
     dealersCards.first.setAttribute("class", `card large ${cards[1].face}`);
+    dealersHand.push(cards[1].value);
     playersCards.second.setAttribute("class", `card large ${cards[2].face}`);
+    playersHand.push(cards[2].value);
 
     let cardSuit = cards[3].face.slice(0,1);
     if(cardSuit === 's' || cardSuit === 'c'){
@@ -190,6 +198,18 @@ function dealCards(){
     }
 
     dealersCards.second.setAttribute("class", `card large ${cardSuit}`);
+    dealersHand.push(cards[3].value);
+    console.log(playersHand);
+    console.log(dealersHand)
+    dealerHasBlackjack = checkIfBlackjack(dealersHand);
+    playerHasBlackjack = checkIfBlackjack(playersHand);
+
+    if (playerHasBlackjack && dealerHasBlackjack){
+        roundOver();
+    }
+    if(playerHasBlackjack){
+        dealerTakesCard();
+    };
 }
 
 function playerTakesCard(){
@@ -219,7 +239,44 @@ function playerTakesCard(){
 }
 
 function dealerTakesCard(){
+    // dealersCards.second.removeAttribute("class")
+    dealersCards.second.setAttribute("class", `card large ${cards[3].face}`)
+    console.log(dealersHand)
+    if(dealerHasBlackjack){
+        roundOver();
+    }
+    let dealersRunningTotal = dealersHand.reduce((acc, num) => acc + num);
+    console.log(dealersRunningTotal);
 
+    if(dealersRunningTotal < dealerRestsAmount){
+        console.log(totalCardsPlayed);
+        dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+        dealersRunningTotal += cards[totalCardsPlayed].value;
+        console.log(dealersRunningTotal);
+        if(dealersRunningTotal < dealerRestsAmount){
+            dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+            dealersRunningTotal += cards[totalCardsPlayed].value;
+            console.log(dealersRunningTotal);
+            if(dealersRunningTotal < dealerRestsAmount){
+                dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+                dealersRunningTotal += cards[totalCardsPlayed].value;
+                console.log(dealersRunningTotal);
+            }
+        }
+
+        console.log(dealersRunningTotal);
+    }
+
+}
+
+function checkIfBlackjack(array){
+    const totalPoints = array.reduce((acc, num) => acc + num);
+    if(totalPoints === 21){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 function checkIfPlayerBust(){
@@ -227,7 +284,7 @@ function checkIfPlayerBust(){
 }
 
 function roundOver(){
-    console.log("seems okay")
+    console.log("round over")
 
 }
 
@@ -262,9 +319,9 @@ function double(){
         removeBettingEventListerners();
         removeGameplayEventListeners();
     }
-
+    dealerTakesCard();
 }
 
 function playerStands(){
-
+    dealerTakesCard();
 }
