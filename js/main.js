@@ -34,6 +34,7 @@ const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', '
 
 /*----- state variables -----*/
 let currentPot = 0;
+let currentBank = 1000;
 
 /*----- cached elements  -----*/
 const buttonElements = {
@@ -53,20 +54,25 @@ const chipElements = {
     chipValue100: document.getElementById('chip-value100'),
 }
 
-const potElement = document.getElementById('current-pot');
+const moneyElements ={
+    potElement: document.getElementById('current-pot'),
+    bankElement: document.getElementById('current-bank')
+}
+ 
 
 /*----- event listeners -----*/
 document.querySelector('body').addEventListener('click', function (event){
-    console.log(event.target);
+    // console.log(event.target);
 })
 
-chipElements.chipValue05.addEventListener('click', addMoneyToPot);
-chipElements.chipValue10.addEventListener('click', addMoneyToPot);
-chipElements.chipValue25.addEventListener('click', addMoneyToPot);
-chipElements.chipValue50.addEventListener('click', addMoneyToPot);
-chipElements.chipValue100.addEventListener('click', addMoneyToPot);
+chipElements.chipValue05.addEventListener('click', moveMoney);
+chipElements.chipValue10.addEventListener('click', moveMoney);
+chipElements.chipValue25.addEventListener('click', moveMoney);
+chipElements.chipValue50.addEventListener('click', moveMoney);
+chipElements.chipValue100.addEventListener('click', moveMoney);
 
 buttonElements.clearBetButton.addEventListener('click', clearBet);
+buttonElements.allInButton.addEventListener('click', allIn);
 
 /*----- functions -----*/
 function buildOriginalDeck () {
@@ -78,7 +84,7 @@ function buildOriginalDeck () {
                 value: Number(rank) || (rank === 'A' ? 11 : 10)
             });
         });
-    });
+    }); 
     return deck;
 }
 
@@ -88,32 +94,51 @@ function shuffleDeck () {
     return shuffled;
 }
 
-function addMoneyToPot(event){
-    // console.log(currentPot);
+function moveMoney(event){
     if(event.target === chipElements.chipValue05){
-        currentPot += 5;
-        console.log(currentPot);
-        potElement.innerText = currentPot
+        moveMoneyToPot(5);
+        deductMoneyFromBank(5);
     }
     if(event.target === chipElements.chipValue10){
-        currentPot += 10
-        potElement.innerText = currentPot
+        moveMoneyToPot(10);
+        deductMoneyFromBank(10);
     }
     if(event.target === chipElements.chipValue25){
-        currentPot += 25
-        potElement.innerText = currentPot
+        moveMoneyToPot(25);
+        deductMoneyFromBank(25);
     }
     if(event.target === chipElements.chipValue50){
-        currentPot += 50
-        potElement.innerText = currentPot
+        moveMoneyToPot(50);
+        deductMoneyFromBank(50);
     }
     if(event.target === chipElements.chipValue100){
-        currentPot += 100
-        potElement.innerText = currentPot
+        moveMoneyToPot(100);
+        deductMoneyFromBank(100);
     }
+}
+
+// could possibly combine these two functions
+function moveMoneyToPot(amount){
+    currentPot += amount;
+    moneyElements.potElement.innerText = currentPot;
+}
+
+function deductMoneyFromBank(amount){
+    currentBank -= amount;
+    moneyElements.bankElement.innerText = currentBank;
 }
 
 function clearBet(){
     currentPot = 0;
-    potElement.innerText = 0;
+    //TO DO: Factor in how much money has been lost/or gained before resetting bank to zero
+    currentBank = 1000;
+    moneyElements.potElement.innerText = 0;
+    moneyElements.bankElement.innerText = 1000;
+}
+
+function allIn(){
+    currentPot += currentBank;
+    currentBank = 0;
+    moneyElements.potElement.innerText = currentPot;
+    moneyElements.bankElement.innerText = currentBank;
 }
