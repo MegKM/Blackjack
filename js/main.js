@@ -39,7 +39,7 @@ let cards = '';
 
 /*----- cached elements  -----*/
 const buttonElements = {
-    betButton: document.getElementById('bet-button'),
+    dealButton: document.getElementById('deal-button'),
     allInButton: document.getElementById('all-in-button'),
     clearBetButton: document.getElementById('clear-bet-button'),
     hitButton: document.getElementById('hit-button'),
@@ -90,7 +90,7 @@ chipElements.chipValue100.addEventListener('click', moveMoney);
 
 buttonElements.clearBetButton.addEventListener('click', clearBet);
 buttonElements.allInButton.addEventListener('click', allIn);
-buttonElements.betButton.addEventListener('click', betAndStartRound);
+buttonElements.dealButton.addEventListener('click', betAndStartRound);
 
 /*----- functions -----*/
 init()
@@ -167,8 +167,8 @@ function allIn(){
 }
 
 function betAndStartRound(){
-    playersCards.first.setAttribute("class", `card ${cards[0].face}`);
-    dealersCards.first.setAttribute("class", `card ${cards[1].face}`);
-    playersCards.second.setAttribute("class", `card ${cards[2].face}`);
-    dealersCards.second.setAttribute("class", `card ${cards[3].face}`);
+    playersCards.first.setAttribute("class", `card large ${cards[0].face}`);
+    dealersCards.first.setAttribute("class", `card large ${cards[1].face}`);
+    playersCards.second.setAttribute("class", `card large ${cards[2].face}`);
+    dealersCards.second.setAttribute("class", `card large ${cards[3].face}`);
 }

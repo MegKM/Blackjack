@@ -10,7 +10,7 @@
 <body>
     <h1>Backjack</h1>
     <section id="left-board">
-        <p>$<span id="current-bank">1000</span></p>
+        <p id="money-text">$<span id="current-bank">1000</span></p>
         <div id="chips">
             <button><img id="chip-value5" src="assets/chip5.png"></button>
             <button><img id="chip-value10" src="assets/chip10.png"></button>
@@ -19,29 +19,31 @@
             <button><img id="chip-value100"src="assets/chip100.png"></button>
         </div>
         <div id="buttons-below-chips">
-            <button class="gameplay-button" id="bet-button">Bet</button>
             <button class="gameplay-button" id="all-in-button">All in</button>
             <button class="gameplay-button" id="clear-bet-button">Clear bet</button>
+            <button class="gameplay-button" id="deal-button">DEAL</button>
         </div>
     </section>
 
     <section id="main-board">
+        <p>Dealer's hand</p>
         <div id="dealers-cards">
-            <div id="dealer-card1">d1</div>
-            <div id="dealer-card2">d2</div>
-            <div id="dealer-card3">d3</div>
-            <div id="dealer-card4">d4</div>
-            <div id="dealer-card5">d5</div>
+            <div id="dealer-card1"></div>
+            <div id="dealer-card2"></div>
+            <div id="dealer-card3"></div>
+            <div id="dealer-card4"></div>
+            <div id="dealer-card5"></div>
         </div>
         <div id="pot">
-            <p>$<span id="current-pot">0</span></p>
+            <p id="money-text">$<span id="current-pot">0</span></p>
         </div>
+        <p>Player's hand</p>
         <div id="players-cards">
-            <div id="player-card1">p1</div>
-            <div id="player-card2">p2</div>
-            <div id="player-card3">p2</div>
-            <div id="player-card4">p2</div>
-            <div id="player-card5">p5</div>
+            <div id="player-card1"></div>
+            <div id="player-card2"></div>
+            <div id="player-card3"></div>
+            <div id="player-card4"></div>
+            <div id="player-card5"></div>
         </div>
         <div id="gameplay-buttons-container">
             <button class="gameplay-button" id="hit-button">Hit</button>
@@ -51,6 +53,7 @@
     </section>
 
     <section id="right-board">
+
         <p>Scores</p>
         <p>Dealer has won: </p>
         <p>You have won: </p>

@@ -7,8 +7,9 @@
 body {
     display: grid;
     grid-template-columns: 300px 1fr 300px;
-    grid-template-rows: 100px 1fr 1fr;
+    grid-template-rows: 100px 1fr 300px;
     background-color: rgb(50, 141, 50);
+    min-height: 100vh; 
 }
 
 h1 {
@@ -19,9 +20,9 @@ h1 {
 }
 
 #main-board {
+    display: grid;
     grid-column: 2;
-    grid-row: 2 / span 2;
-    min-height: 100vh;
+    grid-row: 2;
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -38,6 +39,7 @@ h1 {
 #left-board {
     grid-column: 1;
     padding: 1vmin;
+
 }
 
 #right-board {
@@ -53,14 +55,16 @@ h1 {
 
 #buttons-below-chips {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-evenly;
     align-items: center;
 }
 
 #players-cards > div, #dealers-cards > div{
-    height: 30vmin;
-    width: 20vmin;
+    height: 200px;
+    width: 150px;
     border: 2px solid black;
+    margin: 0;
 }
 
 #dealers-cards {
@@ -78,21 +82,26 @@ h1 {
 #pot {
     display: grid;
     grid-template-columns: 1fr;
-    height: 15vmin;
-    width: 30vmin;
-    border: 2px solid black;
+    /* height: 15vmin;
+    width: 30vmin; */
+    /* border: 2px solid black; */
     border-radius: 50%;
     vertical-align: middle;
 
 }
 
-p {
-    font-size: 10vmin;
+#money-text {
+    font-size: 50px;
     margin: 0;
     padding: 0;
     text-align: center;
     padding: 1vmin 0;
 }
+
+#deal-button {
+    background-color: rgb(42, 8, 65);
+}
+
 .gameplay-button{
     padding: 2vmin;
     background-color: rgb(0, 0, 136);
@@ -113,6 +122,8 @@ p {
     margin: 2vmin;
     justify-self: center;
 }
+
+
 
 #chips > button {
     border-radius: 100%;
