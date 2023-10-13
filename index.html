@@ -11,17 +11,18 @@
     <h1>Backjack</h1>
     <section id="left-board">
         <p>Current money</p>
-        <section id="chips">
-            <button id="chip-value5"><img src="assets/chip5.png"></button>
-            <button id="chip-value10"><img src="assets/chip10.png"></button>
-            <button id="chip-value25"><img src="assets/chip25.png"></button>
-            <button id="chip-value50"><img src="assets/chip50.png"></button>
-            <button id="chip-value100"><img src="assets/chip100.png"></button>
-        </section>
-        <section id="buttons-below-chips">
-            <button class="gameplay-button">Bet</button>
-            <button class="gameplay-button">All in</button>
-        </section>
+        <div id="chips">
+            <button><img id="chip-value5" src="assets/chip5.png"></button>
+            <button><img id="chip-value10" src="assets/chip10.png"></button>
+            <button><img id="chip-value25" src="assets/chip25.png"></button>
+            <button><img id="chip-value50" src="assets/chip50.png"></button>
+            <button><img id="chip-value100"src="assets/chip100.png"></button>
+        </div>
+        <div id="buttons-below-chips">
+            <button class="gameplay-button" id="bet-button">Bet</button>
+            <button class="gameplay-button" id="all-in-button">All in</button>
+            <button class="gameplay-button" id="clear-bet-button">Clear bet</button>
+        </div>
     </section>
 
     <section id="main-board">
@@ -32,7 +33,9 @@
             <div id="dealer-card4">d4</div>
             <div id="dealer-card5">d5</div>
         </div>
-            <div id="pot">Pot image</div>
+        <div id="pot">
+            <p>$<span id="current-pot">0</span></p>
+        </div>
         <div id="players-cards">
             <div id="player-card1">p1</div>
             <div id="player-card2">p2</div>
@@ -41,15 +44,15 @@
             <div id="player-card5">p5</div>
         </div>
         <div id="gameplay-buttons-container">
-            <button class="gameplay-button">Hit</button>
-            <button class="gameplay-button">Double</button>
-            <button class="gameplay-button">Stand</button>
+            <button class="gameplay-button" id="hit-button">Hit</button>
+            <button class="gameplay-button" id="double-button">Double</button>
+            <button class="gameplay-button" id="stand-button">Stand</button>
         </div>
     </section>
 
     <section id="right-board">
         <p>Scores</p>
-        <p>Computer has won: </p>
+        <p>Dealer has won: </p>
         <p>You have won: </p>
     </section>
 

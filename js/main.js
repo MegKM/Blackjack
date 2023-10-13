@@ -29,15 +29,91 @@ Otherwise you’d go bust. For example, a hand containing a 6, and 8 and an ace 
 your total would be 25 and you’d be out; the ace, therefore, has to count as 1, bringing your total to 15. */
 
 /*----- constants -----*/
-
+const suits = ['s', 'c', 'd', 'h'];
+const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', 'K', 'A'];
 
 /*----- state variables -----*/
-
+let currentPot = 0;
 
 /*----- cached elements  -----*/
+const buttonElements = {
+    betButton: document.getElementById('bet-button'),
+    allInButton: document.getElementById('all-in-button'),
+    clearBetButton: document.getElementById('clear-bet-button'),
+    hitButton: document.getElementById('hit-button'),
+    doubleButton: document.getElementById('double-button'),
+    standButton: document.getElementById('stand-button'),
+}
 
+const chipElements = {
+    chipValue05: document.getElementById('chip-value5'),
+    chipValue10: document.getElementById('chip-value10'),
+    chipValue25: document.getElementById('chip-value25'),
+    chipValue50: document.getElementById('chip-value50'),
+    chipValue100: document.getElementById('chip-value100'),
+}
+
+const potElement = document.getElementById('current-pot');
 
 /*----- event listeners -----*/
+document.querySelector('body').addEventListener('click', function (event){
+    console.log(event.target);
+})
 
+chipElements.chipValue05.addEventListener('click', addMoneyToPot);
+chipElements.chipValue10.addEventListener('click', addMoneyToPot);
+chipElements.chipValue25.addEventListener('click', addMoneyToPot);
+chipElements.chipValue50.addEventListener('click', addMoneyToPot);
+chipElements.chipValue100.addEventListener('click', addMoneyToPot);
+
+buttonElements.clearBetButton.addEventListener('click', clearBet);
 
 /*----- functions -----*/
+function buildOriginalDeck () {
+    const deck = [];
+    suits.forEach((suit) => {
+        ranks.forEach((rank) => {
+            deck.push({
+                face: suit + rank,
+                value: Number(rank) || (rank === 'A' ? 11 : 10)
+            });
+        });
+    });
+    return deck;
+}
+
+function shuffleDeck () {
+    const shuffled = [...originalDeck]; // make a copy
+    shuffled.sort(() => 0.5 - Math.random()); // randomly return negative or positive number
+    return shuffled;
+}
+
+function addMoneyToPot(event){
+    // console.log(currentPot);
+    if(event.target === chipElements.chipValue05){
+        currentPot += 5;
+        console.log(currentPot);
+        potElement.innerText = currentPot
+    }
+    if(event.target === chipElements.chipValue10){
+        currentPot += 10
+        potElement.innerText = currentPot
+    }
+    if(event.target === chipElements.chipValue25){
+        currentPot += 25
+        potElement.innerText = currentPot
+    }
+    if(event.target === chipElements.chipValue50){
+        currentPot += 50
+        potElement.innerText = currentPot
+    }
+    if(event.target === chipElements.chipValue100){
+        currentPot += 100
+        potElement.innerText = currentPot
+    }
+}
+
+function clearBet(){
+    currentPot = 0;
+    potElement.innerText = 0;
+}
