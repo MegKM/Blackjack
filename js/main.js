@@ -36,12 +36,17 @@ const ranks = ['02', '03', '04', '05', '06', '07', '08', '09', '10', 'J', 'Q', '
 let currentPot = 0;
 let currentBank = 1000;
 let cards = '';
+
+// might need to add to function to call on init
+
 let totalCardsPlayed = 4;
 const playersHand = [];
 const dealersHand = [];
 let playerHasBlackjack = false;
 let dealerHasBlackjack = false;
 const dealerRestsAmount = 17;
+let dealersRunningTotal = 0;
+let playersRunningTotal = 0;
 
 /*----- cached elements  -----*/
 const buttonElements = {
@@ -51,6 +56,7 @@ const buttonElements = {
     hitButton: document.getElementById('hit-button'),
     doubleButton: document.getElementById('double-button'),
     standButton: document.getElementById('stand-button'),
+    playAgainButton: document.getElementById('play-again-button'),
 }
 
 const chipElements = {
@@ -63,7 +69,7 @@ const chipElements = {
 
 const moneyElements = {
     potElement: document.getElementById('current-pot'),
-    bankElement: document.getElementById('current-bank')
+    bankElement: document.getElementById('current-bank'),
 }
 
 const dealersCards = {
@@ -102,13 +108,18 @@ function activateGameplayEventListerners(){
     buttonElements.standButton.addEventListener('click', playerStands);
 }
 
+function activatePlayAgainButton(){
+    buttonElements.playAgainButton.addEventListener('click', playAgain);
+}
+
 /*----- functions -----*/
 init()
 
 function init(){
     cards = buildDeck();
+    console.log(cards);
     activateBettingEventListerners();
-    activateGameplayEventListerners();
+    buttonElements.playAgainButton.removeEventListener('click', playAgain);
 }
 
 function buildDeck () {
@@ -162,11 +173,10 @@ function deductMoneyFromBank(amount){
 }
 
 function clearBet(){
-    currentPot = 0;
-    //TO DO: Factor in how much money has been lost/or gained before resetting bank to 1000
-    currentBank = 1000;
-    moneyElements.potElement.innerText = 0;
-    moneyElements.bankElement.innerText = 1000;
+    currentBank += currentPot;
+    currentPot = 0;  
+    moneyElements.potElement.innerText = currentPot;
+    moneyElements.bankElement.innerText = currentBank;
 }
 
 function allIn(){
@@ -182,6 +192,7 @@ function dealCards(){
     }
 
     removeBettingEventListerners();
+    activateGameplayEventListerners();
 
     playersCards.first.setAttribute("class", `card large ${cards[0].face}`);
     playersHand.push(cards[0].value);
@@ -200,10 +211,12 @@ function dealCards(){
     dealersCards.second.setAttribute("class", `card large ${cardSuit}`);
     dealersHand.push(cards[3].value);
     console.log(playersHand);
-    console.log(dealersHand)
+    console.log(dealersHand);
+
+    dealersRunningTotal = dealersHand.reduce((acc, num) => acc + num);
+    playersRunningTotal = playersHand.reduce((acc, num) => acc + num);
     dealerHasBlackjack = checkIfBlackjack(dealersHand);
     playerHasBlackjack = checkIfBlackjack(playersHand);
-
     if (playerHasBlackjack && dealerHasBlackjack){
         roundOver();
     }
@@ -213,24 +226,22 @@ function dealCards(){
 }
 
 function playerTakesCard(){
-    if (playersCards.first.getAttribute("class") === 'empty'){
-        return;
-    }
-
     if (playersCards.third.getAttribute("class") === "empty"){
         playersCards.third.setAttribute("class", `card large ${cards[4].face}`)
+        playersRunningTotal += cards[4].value;
         totalCardsPlayed += 1 
         if(checkIfPlayerBust()) {roundOver()};
     }
     else if (playersCards.fourth.getAttribute("class") === "empty"){
         playersCards.fourth.setAttribute("class", `card large ${cards[5].face}`)
+        playersRunningTotal += cards[5].value;
         totalCardsPlayed += 1 
         if(checkIfPlayerBust()) {roundOver()};
     }
     else if (playersCards.fifth.getAttribute("class") === "empty"){
         playersCards.fifth.setAttribute("class", `card large ${cards[6].face}`)
+        playersRunningTotal += cards[6].value;
         totalCardsPlayed += 1 
-        console.log(totalCardsPlayed)
         if(checkIfPlayerBust()) {roundOver()};
     }
     else{
@@ -239,32 +250,35 @@ function playerTakesCard(){
 }
 
 function dealerTakesCard(){
-    // dealersCards.second.removeAttribute("class")
     dealersCards.second.setAttribute("class", `card large ${cards[3].face}`)
     console.log(dealersHand)
     if(dealerHasBlackjack){
         roundOver();
     }
-    let dealersRunningTotal = dealersHand.reduce((acc, num) => acc + num);
-    console.log(dealersRunningTotal);
 
     if(dealersRunningTotal < dealerRestsAmount){
-        console.log(totalCardsPlayed);
-        dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+        dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`);
         dealersRunningTotal += cards[totalCardsPlayed].value;
-        console.log(dealersRunningTotal);
+        totalCardsPlayed += 1;
         if(dealersRunningTotal < dealerRestsAmount){
-            dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+            dealersCards.fourth.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
             dealersRunningTotal += cards[totalCardsPlayed].value;
-            console.log(dealersRunningTotal);
+            totalCardsPlayed += 1
             if(dealersRunningTotal < dealerRestsAmount){
-                dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+                dealersCards.fifth.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
                 dealersRunningTotal += cards[totalCardsPlayed].value;
-                console.log(dealersRunningTotal);
+                roundOver();
+            }
+            else{
+                roundOver();
             }
         }
-
-        console.log(dealersRunningTotal);
+        else{
+            roundOver();
+        }
+    }
+    else{
+        roundOver();
     }
 
 }
@@ -280,11 +294,35 @@ function checkIfBlackjack(array){
 }
 
 function checkIfPlayerBust(){
-    return false;
+    if(playersRunningTotal > 21){
+        currentPot = 0;
+        return true;
+    }
 }
 
 function roundOver(){
-    console.log("round over")
+    removeGameplayEventListeners();
+    console.log("player: ", playersRunningTotal);
+    console.log("dealer: ", dealersRunningTotal);
+
+    if(playersRunningTotal > dealersRunningTotal || dealersRunningTotal > 21){
+        currentBank += currentPot * 2;
+        currentPot = 0;
+        moneyElements.potElement.innerText = currentPot;
+        moneyElements.bankElement.innerText = currentBank;
+    }
+    else if(dealersRunningTotal > playersRunningTotal){
+        currentPot = 0;
+        moneyElements.potElement.innerText = currentPot;
+    }
+    else{
+        currentBank += currentPot;
+        currentPot = 0;
+        moneyElements.potElement.innerText = currentPot;
+        moneyElements.bankElement.innerText = currentBank;
+    }    
+    console.log("round over");
+    activatePlayAgainButton();
 
 }
 
@@ -306,10 +344,6 @@ function removeGameplayEventListeners(){
 }
 
 function double(){
-    if (playersCards.first.getAttribute("class") === 'empty'){
-        return;
-    }
-
     if (playersCards.third.getAttribute("class") === "empty"){
         playersCards.third.setAttribute("class", `card large ${cards[4].face}`)
         totalCardsPlayed += 1 
@@ -319,9 +353,33 @@ function double(){
         removeBettingEventListerners();
         removeGameplayEventListeners();
     }
+    playersRunningTotal += cards[4].value;
     dealerTakesCard();
 }
 
 function playerStands(){
     dealerTakesCard();
+}
+
+function playAgain(){
+    playersHand.length = 0;
+    dealersHand.length = 0;
+    playerHasBlackjack = false;
+    dealerHasBlackjack = false;
+    dealersRunningTotal = 0;
+    playersRunningTotal = 0;
+
+    playersCards.first.setAttribute("class", "empty");
+    playersCards.second.setAttribute("class", "empty");
+    playersCards.third.setAttribute("class", "empty");
+    playersCards.fourth.setAttribute("class", "empty");
+    playersCards.fifth.setAttribute("class", "empty");
+
+    dealersCards.first.setAttribute("class", "empty");
+    dealersCards.second.setAttribute("class", "empty");
+    dealersCards.third.setAttribute("class", "empty");
+    dealersCards.fourth.setAttribute("class", "empty");
+    dealersCards.fifth.setAttribute("class", "empty");
+
+    init();
 }

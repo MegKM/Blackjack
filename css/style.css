@@ -102,6 +102,10 @@ h1 {
     background-color: rgb(42, 8, 65);
 }
 
+#play-again-button {
+    background-color: rgb(42, 8, 65);
+}
+
 .gameplay-button{
     padding: 2vmin;
     background-color: rgb(0, 0, 136);
