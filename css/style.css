@@ -45,6 +45,13 @@ h1 {
 #right-board {
     grid-column: 3;
     padding: 1vmin;
+    position: relative;
+}
+
+#right-board > p {
+  font-size: x-large;
+  margin: 2vmin 0vmin;
+  text-align: center;
 }
 
 #chips {
@@ -104,9 +111,12 @@ h1 {
 
 #play-again-button {
     background-color: rgb(42, 8, 65);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
-.gameplay-button{
+.gameplay-button {
     padding: 2vmin;
     background-color: rgb(0, 0, 136);
     border-radius: 25%;
