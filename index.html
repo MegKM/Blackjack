@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cookie&family=Great+Vibes&family=Rouge+Script&family=Tangerine&display=swap" rel="stylesheet">
     <script defer src="js/main.js"></script>
     <title>Backjack</title>
 </head>
@@ -12,20 +15,21 @@
     <section id="left-board">
         <p id="money-text">$<span id="current-bank">1000</span></p>
         <div id="chips">
-            <button><img id="chip-value5" src="assets/chips/chip5.png"></button>
-            <button><img id="chip-value10" src="assets/chips/chip10.png"></button>
-            <button><img id="chip-value25" src="assets/chips/chip25.png"></button>
-            <button><img id="chip-value50" src="assets/chips/chip50.png"></button>
-            <button><img id="chip-value100"src="assets/chips/chip100.png"></button>
+            <!-- <button><img id="chip-value5" src="assets/chips/chip5.png"></button> -->
+            <button id="chip-value5"></button>
+            <button id="chip-value10"></button>
+            <button id="chip-value25"></button>
+            <button id="chip-value50"></button>
+            <button id="chip-value100"></button>
         </div>
         <div id="buttons-below-chips">
             <button class="gameplay-button" id="all-in-button">All in</button>
             <button class="gameplay-button" id="clear-bet-button">Clear bet</button>
-            <button class="gameplay-button" id="deal-button">DEAL</button>
+            <button class="gameplay-button" id="deal-button">Deal</button>
         </div>
     </section>
-
-    <section id="main-board">
+    
+    <section id="main-board" class="grit">
         <p>Dealer's hand</p>
         <div id="dealers-cards">
             <div id="dealer-card1"></div>
@@ -54,11 +58,11 @@
 
     <section id="right-board">
 
-        <p>Scores</p>
+        <p id="scores-header">Scores</p>
         <p>Dealer has:</p>
-        <p id="dealers-card-total-display"></p>
+        <p id="dealers-card-total-display">0</p>
         <p>You have:</p>
-        <p id="players-card-total-display"></p>
+        <p id="players-card-total-display">0</p>
         <p id="dealers-result"></p>
         <p id="players-result"></p>
         <p id="game-result"></p>
@@ -66,5 +70,6 @@
         
     </section>
 
+    <section id="screen-bottom"></section>
 </body>
 </html>

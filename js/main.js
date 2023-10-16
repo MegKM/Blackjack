@@ -1,6 +1,5 @@
 /*
     To do:
-    - run out of money / game over
     - make prettier
 
     Could be refactored?:
@@ -127,19 +126,19 @@ function buildDeck () {
 
 function moveMoney(event){
     //Move money from bank to pot depending on chip value
-    if(event.target === chipElements.chipValue05){
+    if(event.target === chipElements.chipValue05 && currentBank >= 5){
         moveMoneyToPot(5);
     }
-    if(event.target === chipElements.chipValue10){
+    if(event.target === chipElements.chipValue10 && currentBank >= 10){
         moveMoneyToPot(10);
     }
-    if(event.target === chipElements.chipValue25){
+    if(event.target === chipElements.chipValue25 && currentBank >= 25){
         moveMoneyToPot(25);
     }
-    if(event.target === chipElements.chipValue50){
+    if(event.target === chipElements.chipValue50 && currentBank >= 50){
         moveMoneyToPot(50);
     }
-    if(event.target === chipElements.chipValue100){
+    if(event.target === chipElements.chipValue100 && currentBank >= 100){
         moveMoneyToPot(100);
     }
 }
@@ -179,22 +178,24 @@ function dealCards(){
     // Get first 4 elements in cards array to display on screen, 2nd card for dealer is back only, build player/dealer's initial arrays and running totals
     setTimeout(() => {
         dealCardAudio.play();    
-        playersCards.first.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`);
+        playersCards.first.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
         playersHand.push(cards[totalCardsPlayed].value);
         totalCardsPlayed += 1;
     }, 250);
 
     setTimeout(() => {
         dealCardAudio.play();
-        dealersCards.first.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`);
+        dealersCards.first.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
         dealersHand.push(cards[totalCardsPlayed].value);
         totalCardsPlayed += 1;
     }, 800);
 
     setTimeout(() => {
         dealCardAudio.play();
-        playersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`);
+        playersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
         playersHand.push(cards[totalCardsPlayed].value);
+        playersRunningTotal = playersHand.reduce((acc, num) => acc + num);
+        checkIfPlayerBust();
         totalCardsPlayed += 1;
     }, 1350);
 
@@ -208,10 +209,10 @@ function dealCards(){
         };
 
         dealCardAudio.play();
-        dealersCards.second.setAttribute("class", `card large ${cardSuit}`);
+        dealersCards.second.setAttribute("class", `card large ${cardSuit} card-shadow`);
         dealersHand.push(cards[totalCardsPlayed].value);
         dealersRunningTotal = dealersHand.reduce((acc, num) => acc + num);
-        playersRunningTotal = playersHand.reduce((acc, num) => acc + num);
+
         updatePlayersOnscreenScore();
 
         //Check if either player or player & dealer have blackjack, game ends accordingly
@@ -220,7 +221,7 @@ function dealCards(){
         if (playerHasBlackjack && dealerHasBlackjack){
             setTimeout(() => {
                 dealCardAudio.play();
-                dealersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+                dealersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`)
                 updateDealersOnscreenScore();
                 countupCurrentBank(currentPot);
                 countdownCurrentPot();
@@ -231,7 +232,7 @@ function dealCards(){
         if(playerHasBlackjack && !dealerHasBlackjack){
             setTimeout(() => {
                 dealCardAudio.play();
-                dealersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+                dealersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`)
                 updateDealersOnscreenScore();
                 displayElements.playersResult.innerText = "You have blackjack!";
                 displayElements.gameResult.innerHTML = `Dealer pays triple: ${currentPot * 3}`;
@@ -247,16 +248,16 @@ function dealCards(){
 function playerTakesCard(){
     //If card slot is still available, display new card.
     if (playersCards.third.getAttribute("class") === "empty"){
-        playersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+        playersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`)
         //Update array and running total, check if player bust factoring in aces being 1 or 11
         addCardToPlayersHand();
     }
     else if (playersCards.fourth.getAttribute("class") === "empty"){
-        playersCards.fourth.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+        playersCards.fourth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`)
         addCardToPlayersHand();
     }
     else if (playersCards.fifth.getAttribute("class") === "empty"){
-        playersCards.fifth.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
+        playersCards.fifth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`)
         addCardToPlayersHand();
     }
     else{
@@ -276,28 +277,32 @@ function addCardToPlayersHand(){
 }
 
 function dealerTakesCard(){
-    //Same as playerTakesCard above but set to timers.  Function exits when dealer hits 17, 21, total is higher than player or dealer busts.
+    //Same as playerTakesCard above but set to timers.  Function exits when dealer hits 17, 21, total is higher than player or dealer busts. 
     setTimeout(() => {
         dealCardAudio.play();
-        dealersCards.second.setAttribute("class", `card large ${cards[3].face}`);
+        dealersCards.second.setAttribute("class", `card large ${cards[3].face} card-shadow`);
+        checkIfDealerBust();
         updateDealersOnscreenScore();
-        if(dealerHasBlackjack || (dealersRunningTotal > playersRunningTotal)){
+        if(dealerHasBlackjack && dealersCards.third.getAttribute("class") === "empty"){
             roundOver();
+        }
+        if(dealersRunningTotal > playersRunningTotal && dealersRunningTotal <= 21){
+            roundOver()
         }
         else{
             setTimeout(() => {
                 if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
-                    dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`);
+                    dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
                     addCardToDealersHand();
 
                     setTimeout(() => {
                         if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
-                            dealersCards.fourth.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`);
+                            dealersCards.fourth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
                             addCardToDealersHand();
 
                             setTimeout(() => {
                                 if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
-                                    dealersCards.fifth.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`);
+                                    dealersCards.fifth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
                                     addCardToDealersHand();
                                     roundOver();
                                 }else{roundOver();}
@@ -340,9 +345,11 @@ function checkIfPlayerBust(){
     //If player has gone over 21, check if any of the cards are ace and change them to 1.
     playersHand.forEach((card, index) => {
         if(card === 11){
-            playersHand[index] = 1;
-            playersRunningTotal -= 10;
-            updatePlayersOnscreenScore();
+            if(playersRunningTotal > 21){
+                playersHand[index] = 1;
+                playersRunningTotal -= 10;
+                updatePlayersOnscreenScore();
+            }
         }
     });
     if(playersRunningTotal > 21){
@@ -354,13 +361,30 @@ function checkIfDealerBust(){
     //As above.
     dealersHand.forEach((card, index) => {
         if(card === 11){
-            dealersHand[index] = 1;
-            dealersRunningTotal -= 10;
-            updateDealersOnscreenScore();
+            if(dealersRunningTotal > 21){
+                dealersHand[index] = 1;
+                dealersRunningTotal -= 10;
+                updateDealersOnscreenScore();
+            }
         }
     });
+
     if(dealersRunningTotal > 21){
         roundOver();
+    }
+}
+
+function double(){
+    //Can only be played on 3rd card. Doubles pot, updates ongoing totals then continues with normal gameplay.
+    if (playersCards.third.getAttribute("class") === "empty"){
+        playersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`)
+        currentPot *= 2;
+        moneyElements.potElement.innerText = currentPot;
+        addCardToPlayersHand();
+        updatePlayersOnscreenScore();
+        removeBettingEventListerners();
+        removeGameplayEventListeners();
+        dealerTakesCard();
     }
 }
 
@@ -372,6 +396,7 @@ function roundOver(){
         displayElements.playersResult.innerText = "You bust!";
         displayElements.gameResult.innerText = "Dealer wins";
         countdownCurrentPot();
+        checkIfGameOver()
     }
     else if(dealersRunningTotal > 21){
         displayElements.dealersResult.innerText = "Dealer bust";
@@ -383,6 +408,7 @@ function roundOver(){
         countdownCurrentPot();
         displayElements.dealersResult.innerHTML = "Dealer has Blackjack!";
         displayElements.gameResult.innerText = "Dealer wins.";
+        checkIfGameOver();
     }    
     else if(playersRunningTotal > dealersRunningTotal){
         countupCurrentBank((currentPot*2));
@@ -395,6 +421,7 @@ function roundOver(){
         displayElements.playersResult.innerHTML = `You rested on ${playersRunningTotal}`;
         displayElements.dealersResult.innerHTML = `Dealer has ${dealersRunningTotal}`;
         displayElements.gameResult.innerText = "Dealer wins";
+        checkIfGameOver();
     }
     else{
         countupCurrentBank(currentPot);
@@ -404,10 +431,25 @@ function roundOver(){
     activatePlayAgainButton();
 }
 
+function checkIfGameOver(){
+    if(currentBank === 0){
+        buttonElements.playAgainButton.removeEventListener("click", playAgain);
+        buttonElements.playAgainButton.addEventListener("click", refreshPage);
+        buttonElements.playAgainButton.innerText = "Click to restart game";
+
+        function refreshPage(){
+            location.reload();
+        }
+    }
+}
+
 function countdownCurrentPot(){
     //"Animation" when money moves from pot.
-    const intervalID = setInterval(timer, currentPot / 100)
+    let time = 1000 / (currentPot % 100);
+
+    const intervalID = setInterval(timer, time);
     function timer(){
+        console.log("loop has run")
         if(currentPot > 0){
             currentPot -= 1;
             moneyElements.potElement.innerText = currentPot;
@@ -420,11 +462,13 @@ function countdownCurrentPot(){
 
 function countupCurrentBank(winnings){
     //"Animation" when money moves to bank.
-    const intervalID = setInterval(timer, currentPot / 100)
+    let time = 1000 / (currentPot % 100);
+    let newBankAmount = currentBank + winnings;
+    const intervalID = setInterval(timer, time);
     function timer(){
-        if(winnings > 0){
-            winnings -= 1;
-            moneyElements.bankElement.innerHTML = `${currentBank += 1}`;
+        if(currentBank < newBankAmount){
+            currentBank += 1;
+            moneyElements.bankElement.innerHTML = currentBank;
         }
         else{
             clearInterval(intervalID);
@@ -451,20 +495,6 @@ function removeGameplayEventListeners(){
     buttonElements.standButton.removeEventListener('click', playerStands);
 }
 
-function double(){
-    //Can only be played on 3rd card. Doubles pot, updates ongoing totals then continues with normal gameplay.
-    if (playersCards.third.getAttribute("class") === "empty"){
-        playersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face}`)
-        currentPot *= 2;
-        moneyElements.potElement.innerText = currentPot;
-        addCardToPlayersHand();
-        updatePlayersOnscreenScore();
-        removeBettingEventListerners();
-        removeGameplayEventListeners();
-        dealerTakesCard();
-    }
-}
-
 function playerStands(){
     dealerTakesCard();
 }
@@ -487,8 +517,8 @@ function playAgain(){
     dealersRunningTotal = 0;
     playersRunningTotal = 0;
     totalCardsPlayed = 0;
-    displayElements.dealersCardTotalDisplay.innerText = "";
-    displayElements.playersCardTotalDisplay.innerText = "";
+    displayElements.dealersCardTotalDisplay.innerText = "0";
+    displayElements.playersCardTotalDisplay.innerText = "0";
     displayElements.dealersResult.innerText = "";
     displayElements.playersResult.innerText = "";
     displayElements.gameResult.innerText = "";
