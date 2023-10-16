@@ -1,6 +1,7 @@
 /*
     To do:
-    - make prettier
+    - stop double from adding more money than you have
+    - find dobule + dealer bust bug and FIX
 
     Could be refactored?:
     - Player/Dealer bust functions identical except variables
@@ -245,6 +246,20 @@ function dealCards(){
     }, 1900);
 }
 
+function double(){
+    //Can only be played on 3rd card. Doubles pot, updates ongoing totals then continues with normal gameplay.
+    if (playersCards.third.getAttribute("class") === "empty"){
+        playersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`)
+        currentPot *= 2;
+        moneyElements.potElement.innerText = currentPot;
+        addCardToPlayersHand();
+        updatePlayersOnscreenScore();
+        removeBettingEventListerners();
+        removeGameplayEventListeners();
+        dealerTakesCard();
+    }
+}
+
 function playerTakesCard(){
     //If card slot is still available, display new card.
     if (playersCards.third.getAttribute("class") === "empty"){
@@ -294,11 +309,13 @@ function dealerTakesCard(){
                 if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
                     dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
                     addCardToDealersHand();
+                    checkIfDealerBust();
 
                     setTimeout(() => {
                         if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
                             dealersCards.fourth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
                             addCardToDealersHand();
+                            checkIfDealerBust();
 
                             setTimeout(() => {
                                 if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
@@ -374,59 +391,49 @@ function checkIfDealerBust(){
     }
 }
 
-function double(){
-    //Can only be played on 3rd card. Doubles pot, updates ongoing totals then continues with normal gameplay.
-    if (playersCards.third.getAttribute("class") === "empty"){
-        playersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`)
-        currentPot *= 2;
-        moneyElements.potElement.innerText = currentPot;
-        addCardToPlayersHand();
-        updatePlayersOnscreenScore();
-        removeBettingEventListerners();
-        removeGameplayEventListeners();
-        dealerTakesCard();
-    }
-}
-
 function roundOver(){
     //Prevent gameplay buttons from being clicked after round is over.
     removeGameplayEventListeners();
     //Run through all possible outcomes not already covered and display results on screen.
     if(playersRunningTotal > 21){
         displayElements.playersResult.innerText = "You bust!";
-        displayElements.gameResult.innerText = "Dealer wins";
+        displayElements.gameResult.innerHTML = `You lost ${currentPot}.`;
         countdownCurrentPot();
         checkIfGameOver()
     }
     else if(dealersRunningTotal > 21){
-        displayElements.dealersResult.innerText = "Dealer bust";
-        displayElements.gameResult.innerText = "You win!";
-        countupCurrentBank((currentPot*2));
+        let winnings = currentPot * 2;
+        displayElements.dealersResult.innerText = "Dealer bust.";
+        displayElements.playersResult.innerText = "You win!";
+        displayElements.gameResult.innerHTML = `You won ${winnings}!`;
+        countupCurrentBank(winnings);
         countdownCurrentPot();
     }
     else if(dealersRunningTotal === 21 && dealersCards.third.getAttribute("class") === "empty"){
-        countdownCurrentPot();
         displayElements.dealersResult.innerHTML = "Dealer has Blackjack!";
-        displayElements.gameResult.innerText = "Dealer wins.";
+        displayElements.gameResult.innerHTML = `You lost ${currentPot}.`;
+        countdownCurrentPot();
         checkIfGameOver();
     }    
     else if(playersRunningTotal > dealersRunningTotal){
-        countupCurrentBank((currentPot*2));
-        countdownCurrentPot();
-        displayElements.dealersResult.innerHTML = `Dealer rests on ${dealersRunningTotal}`;
+        let winnings = currentPot * 2;
+        displayElements.dealersResult.innerHTML = `Dealer rests on ${dealersRunningTotal}.`;
         displayElements.playersResult.innerText = "You win!";
+        displayElements.gameResult.innerHTML = `You won ${winnings}.`;
+        countupCurrentBank(winnings);
+        countdownCurrentPot();
     }
     else if(dealersRunningTotal > playersRunningTotal){
+        displayElements.dealersResult.innerHTML = `Dealer rests on ${dealersRunningTotal}`;
+        displayElements.gameResult.innerHTML = `You lost ${currentPot}.`;
         countdownCurrentPot();
-        displayElements.playersResult.innerHTML = `You rested on ${playersRunningTotal}`;
-        displayElements.dealersResult.innerHTML = `Dealer has ${dealersRunningTotal}`;
-        displayElements.gameResult.innerText = "Dealer wins";
         checkIfGameOver();
     }
     else{
+        displayElements.dealersResult.innerText = "It's a tie!";
+        displayElements.gameResult.innerText = `Your bet of ${currentPot} was returned.`;
         countupCurrentBank(currentPot);
         countdownCurrentPot();
-        displayElements.gameResult.innerText = "It's a tie.";
     }    
     activatePlayAgainButton();
 }
@@ -449,9 +456,13 @@ function countdownCurrentPot(){
 
     const intervalID = setInterval(timer, time);
     function timer(){
-        console.log("loop has run")
         if(currentPot > 0){
-            currentPot -= 1;
+            if (currentPot > 300){
+                currentPot -=10;
+            }
+            else{
+                currentPot -= 1;
+            }
             moneyElements.potElement.innerText = currentPot;
         }
         else{
@@ -467,7 +478,11 @@ function countupCurrentBank(winnings){
     const intervalID = setInterval(timer, time);
     function timer(){
         if(currentBank < newBankAmount){
-            currentBank += 1;
+            if(newBankAmount > 300){
+                currentBank += 10
+            } else{
+                currentBank += 1;
+            }            
             moneyElements.bankElement.innerHTML = currentBank;
         }
         else{
