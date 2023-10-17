@@ -24,6 +24,8 @@ h1 {
     margin: 5px 0px;
     padding: 0px;
     font-family: 'Great Vibes', cursive;
+    animation: fadeInDown;
+    animation-duration: 1s;
 }
 
 #main-board {
@@ -55,18 +57,22 @@ h1 {
   color: white;
   border-top: 3px solid white;
   border-bottom: 3px solid white;
+  
 }
 
 #left-board {
     grid-column: 1;
     padding: 1vmin;
-
+    animation: fadeInLeft;
+    animation-duration: 1s;
 }
 
 #right-board {
     grid-column: 3;
     padding: 1vmin;
     position: relative;
+    animation: fadeInRight;
+    animation-duration: 1s;    
 }
 
 #right-board > #scores-header {
@@ -95,11 +101,13 @@ h1 {
 }
 
 #instruction-text-start {
-  visibility: visible;
   margin-bottom: 0;
   background-color: black;
   color: white;
   padding: 20px;
+  animation: flash;
+  animation-delay: 2s;
+  animation-duration: 1s; 
 }
 
 #instruction-text-play {
@@ -227,6 +235,7 @@ h1 {
     gap: 2vmin;
     margin: 2vmin;
     justify-self: center;
+    margin-bottom: 0px;
 }
 
 #chips > button {
@@ -289,8 +298,27 @@ h1 {
   box-shadow: 0px 0px 30px 15px rgb(19, 19, 19) ;
 }
 
+#screen-bottom {
+  grid-column: 2;
+}
 
+details {
+  margin: 20px;
+  padding: 10px;
+  font-size: xx-large;
+  user-select: none;
 
+}
+
+/* details>summary span.icon {
+  width: 24px;
+  height: 24px;
+  transition: all 0.3s;
+}  */
+
+summary {
+  cursor: pointer;
+}
 
 /*---------------------------Cards-------------------------------*/
 
