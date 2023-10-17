@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cookie&family=Great+Vibes&family=Rouge+Script&family=Tangerine&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&family=Great+Vibes&family=Rouge+Script&family=Tangerine&display=swap" rel="stylesheet">
     <script defer src="js/main.js"></script>
     <title>Backjack</title>
 </head>
@@ -27,6 +28,7 @@
             <button class="gameplay-button" id="clear-bet-button">Clear bet</button>
             <button class="gameplay-button" id="deal-button">Deal</button>
         </div>
+        <p id="instruction-text-start">Place your bet then hit Deal</p>
     </section>
     
     <section id="main-board" class="grit">
@@ -54,10 +56,10 @@
             <button class="gameplay-button" id="double-button">Double</button>
             <button class="gameplay-button" id="stand-button">Stand</button>
         </div>
+        <p id="instruction-text-play">Choose your next move from above</p>
     </section>
 
     <section id="right-board">
-
         <p id="scores-header">Scores</p>
         <p>Dealer has:</p>
         <p id="dealers-card-total-display">0</p>
@@ -66,6 +68,7 @@
         <p id="dealers-result"></p>
         <p id="players-result"></p>
         <p id="game-result"></p>
+        <p id="instruction-text-play-again">The hand is over! Click below to deal again</p>
         <button class="gameplay-button" id="play-again-button">Play again</button>
         
     </section>

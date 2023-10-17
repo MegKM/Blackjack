@@ -1,8 +1,4 @@
 /*
-    To do:
-    - stop double from adding more money than you have
-    - find dobule + dealer bust bug and FIX
-
     Could be refactored?:
     - Player/Dealer bust functions identical except variables
     - worth refactoring deal cards function?
@@ -23,6 +19,8 @@ const playersHand = [];
 const dealersHand = [];
 let playerHasBlackjack = false;
 let dealerHasBlackjack = false;
+let gameIsInPlay = true;
+let firstGameShowInstructions = true;
 const dealerRestsAmount = 17;
 let dealersRunningTotal = 0;
 let playersRunningTotal = 0;
@@ -76,6 +74,11 @@ const displayElements = {
     gameResult: document.getElementById('game-result'),
 }
 
+const instructionElements = {
+    startHand: document.getElementById('instruction-text-start'),
+    playHand: document.getElementById('instruction-text-play'),
+    newHand: document.getElementById('instruction-text-play-again')
+}
 /*----- event listeners -----*/
 function activateBettingEventListerners(){
     chipElements.chipValue05.addEventListener('click', moveMoney);
@@ -176,6 +179,11 @@ function dealCards(){
     removeBettingEventListerners();
     activateGameplayEventListerners();
 
+    if(firstGameShowInstructions){
+    instructionElements.startHand.setAttribute("style", "visibility: hidden");
+    instructionElements.playHand.setAttribute("style", "visibility: visible");
+    }
+
     // Get first 4 elements in cards array to display on screen, 2nd card for dealer is back only, build player/dealer's initial arrays and running totals
     setTimeout(() => {
         dealCardAudio.play();    
@@ -248,7 +256,7 @@ function dealCards(){
 
 function double(){
     //Can only be played on 3rd card. Doubles pot, updates ongoing totals then continues with normal gameplay.
-    if (playersCards.third.getAttribute("class") === "empty"){
+    if (playersCards.third.getAttribute("class") === "empty" && currentBank >= (currentPot * 2)){
         playersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`)
         currentPot *= 2;
         moneyElements.potElement.innerText = currentPot;
@@ -298,39 +306,42 @@ function dealerTakesCard(){
         dealersCards.second.setAttribute("class", `card large ${cards[3].face} card-shadow`);
         checkIfDealerBust();
         updateDealersOnscreenScore();
+
+
+
         if(dealerHasBlackjack && dealersCards.third.getAttribute("class") === "empty"){
+            console.log("first dealer check being triggered");
             roundOver();
         }
         if(dealersRunningTotal > playersRunningTotal && dealersRunningTotal <= 21){
+            console.log("second dealer check being triggered");
             roundOver()
         }
-        else{
-            setTimeout(() => {
-                if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
-                    dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
-                    addCardToDealersHand();
-                    checkIfDealerBust();
+        else {
+        setTimeout(() => {
+            if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
+                dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
+                addCardToDealersHand();               
 
-                    setTimeout(() => {
-                        if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
-                            dealersCards.fourth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
-                            addCardToDealersHand();
-                            checkIfDealerBust();
+                setTimeout(() => {
+                    if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
+                        dealersCards.fourth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
+                        addCardToDealersHand();
 
-                            setTimeout(() => {
-                                if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
-                                    dealersCards.fifth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
-                                    addCardToDealersHand();
-                                    roundOver();
-                                }else{roundOver();}
-                            }, 550);
+                        setTimeout(() => {
+                            if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
+                                dealersCards.fifth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
+                                addCardToDealersHand();
+                                roundOver();
+                            }else{roundOver();}
+                        }, 550);
 
-                        }else{roundOver();}
-                    }, 550);
+                    }else{roundOver();}
+                }, 550);
 
-                }else{roundOver();}
-            }, 550);
-        }
+            }else{roundOver();}
+        }, 550);   
+        };    
     }, 550);
 
 
@@ -392,50 +403,64 @@ function checkIfDealerBust(){
 }
 
 function roundOver(){
-    //Prevent gameplay buttons from being clicked after round is over.
-    removeGameplayEventListeners();
-    //Run through all possible outcomes not already covered and display results on screen.
-    if(playersRunningTotal > 21){
-        displayElements.playersResult.innerText = "You bust!";
-        displayElements.gameResult.innerHTML = `You lost ${currentPot}.`;
-        countdownCurrentPot();
-        checkIfGameOver()
+
+    if(gameIsInPlay === true){
+        //Prevent gameplay buttons from being clicked after round is over.
+        removeGameplayEventListeners();
+        //Run through all possible outcomes not already covered and display results on screen.
+        if(playersRunningTotal > 21){
+            displayElements.playersResult.innerText = "You bust!";
+            displayElements.gameResult.innerHTML = `You lost ${currentPot}.`;
+            countdownCurrentPot();
+            checkIfGameOver();
+            gameIsInPlay = false; 
+        }
+        else if(dealersRunningTotal > 21){
+            let winnings = currentPot * 2;
+            displayElements.dealersResult.innerText = "Dealer bust.";
+            displayElements.playersResult.innerText = "You win!";
+            displayElements.gameResult.innerHTML = `You won ${winnings}!`;
+            countupCurrentBank(winnings);
+            countdownCurrentPot();
+            gameIsInPlay = false; 
+        }
+        else if(dealersRunningTotal === 21 && dealersCards.third.getAttribute("class") === "empty"){
+            displayElements.dealersResult.innerHTML = "Dealer has Blackjack!";
+            displayElements.gameResult.innerHTML = `You lost ${currentPot}.`;
+            countdownCurrentPot();
+            checkIfGameOver();
+            gameIsInPlay = false; 
+        }    
+        else if(playersRunningTotal > dealersRunningTotal){
+            let winnings = currentPot * 2;
+            displayElements.dealersResult.innerHTML = `Dealer rests on ${dealersRunningTotal}.`;
+            displayElements.playersResult.innerText = "You win!";
+            displayElements.gameResult.innerHTML = `You won ${winnings}.`;
+            countupCurrentBank(winnings);
+            countdownCurrentPot();
+            gameIsInPlay = false; 
+        }
+        else if(dealersRunningTotal > playersRunningTotal){
+            displayElements.dealersResult.innerHTML = `Dealer rests on ${dealersRunningTotal}`;
+            displayElements.gameResult.innerHTML = `You lost ${currentPot}.`;
+            countdownCurrentPot();
+            checkIfGameOver();
+            gameIsInPlay = false; 
+        }
+        else{
+            displayElements.dealersResult.innerText = "It's a tie!";
+            displayElements.gameResult.innerText = `Your bet of ${currentPot} was returned.`;
+            countupCurrentBank(currentPot);
+            countdownCurrentPot();
+            gameIsInPlay = false; 
+        }    
+        if(firstGameShowInstructions){
+        instructionElements.playHand.setAttribute("style", "visibility: hidden");
+        instructionElements.newHand.setAttribute("style", "visibility: visible");
+        }
+        activatePlayAgainButton();
+        
     }
-    else if(dealersRunningTotal > 21){
-        let winnings = currentPot * 2;
-        displayElements.dealersResult.innerText = "Dealer bust.";
-        displayElements.playersResult.innerText = "You win!";
-        displayElements.gameResult.innerHTML = `You won ${winnings}!`;
-        countupCurrentBank(winnings);
-        countdownCurrentPot();
-    }
-    else if(dealersRunningTotal === 21 && dealersCards.third.getAttribute("class") === "empty"){
-        displayElements.dealersResult.innerHTML = "Dealer has Blackjack!";
-        displayElements.gameResult.innerHTML = `You lost ${currentPot}.`;
-        countdownCurrentPot();
-        checkIfGameOver();
-    }    
-    else if(playersRunningTotal > dealersRunningTotal){
-        let winnings = currentPot * 2;
-        displayElements.dealersResult.innerHTML = `Dealer rests on ${dealersRunningTotal}.`;
-        displayElements.playersResult.innerText = "You win!";
-        displayElements.gameResult.innerHTML = `You won ${winnings}.`;
-        countupCurrentBank(winnings);
-        countdownCurrentPot();
-    }
-    else if(dealersRunningTotal > playersRunningTotal){
-        displayElements.dealersResult.innerHTML = `Dealer rests on ${dealersRunningTotal}`;
-        displayElements.gameResult.innerHTML = `You lost ${currentPot}.`;
-        countdownCurrentPot();
-        checkIfGameOver();
-    }
-    else{
-        displayElements.dealersResult.innerText = "It's a tie!";
-        displayElements.gameResult.innerText = `Your bet of ${currentPot} was returned.`;
-        countupCurrentBank(currentPot);
-        countdownCurrentPot();
-    }    
-    activatePlayAgainButton();
 }
 
 function checkIfGameOver(){
@@ -453,7 +478,6 @@ function checkIfGameOver(){
 function countdownCurrentPot(){
     //"Animation" when money moves from pot.
     let time = 1000 / (currentPot % 100);
-
     const intervalID = setInterval(timer, time);
     function timer(){
         if(currentPot > 0){
@@ -529,6 +553,7 @@ function playAgain(){
     dealersHand.length = 0;
     playerHasBlackjack = false;
     dealerHasBlackjack = false;
+    gameIsInPlay = true;
     dealersRunningTotal = 0;
     playersRunningTotal = 0;
     totalCardsPlayed = 0;
@@ -537,6 +562,8 @@ function playAgain(){
     displayElements.dealersResult.innerText = "";
     displayElements.playersResult.innerText = "";
     displayElements.gameResult.innerText = "";
+    instructionElements.newHand.setAttribute("style", "visibility: hidden");
+    firstGameShowInstructions = false;
 
     playersCards.first.setAttribute("class", "empty");
     playersCards.second.setAttribute("class", "empty");
