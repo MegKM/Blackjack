@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a version of the card game Blackjack created using HTML, CSS and JavaScript.
+This is a version of the card game Blackjack created using HTML, CSS and JavaScript.  The game can be found [here](https://megkm.github.io/Blackjack/).
 
 The objective of the game is to get as close as possible to 21 without going over while having a higher card score than the dealer.
 
@@ -35,7 +35,9 @@ The following outcomes apply when the dealer, player or both get dealt Blackjack
     * Play ends and the player gets their money back.
 
 ## Gameplay Layout
+![Image of game with cards dealt](gameplay-screenshots/Gameplay-layout-with-cards.png)
 
+![Image of game with cards dealt](gameplay-screenshots/Gameplay-layout.png)
 
 ## Technologies Used
 * JavaScript

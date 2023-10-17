@@ -79,7 +79,9 @@ const displayElements = {
 const instructionElements = {
     startHand: document.getElementById('instruction-text-start'),
     playHand: document.getElementById('instruction-text-play'),
-    newHand: document.getElementById('instruction-text-play-again')
+    newHand: document.getElementById('instruction-text-play-again'),
+    howToPlay: document.getElementById('how-to-play'),
+    howToPlayButton: document.getElementById('how-to-play-button'),
 }
 
 /*----- event listeners -----*/
@@ -104,6 +106,8 @@ function activateGameplayEventListerners(){
 function activatePlayAgainButton(){
     buttonElements.playAgainButton.addEventListener('click', playAgain);
 }
+
+instructionElements.howToPlayButton.addEventListener('click', toggleVisbility);
 
 /*----- functions -----*/
 init()
@@ -579,6 +583,10 @@ function updatePlayersOnScreenScore(){
 //Updates the running total for the dealer on screen.
 function updateDealersOnScreenScore(){
     displayElements.dealersCardTotalDisplay.innerText = dealersRunningTotal;
+}
+
+function toggleVisbility(){
+    instructionElements.howToPlay.classList.toggle("hide-how-to-play");
 }
 
 //Resets applicable variables without resetting the bank balance when the 'Play again' button is clicked.

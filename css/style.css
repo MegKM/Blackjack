@@ -1,8 +1,8 @@
 @charset "UTF-8";
 
 * {
-    box-sizing: border-box;
-    font-family: 'Rouge Script', cursive;
+  box-sizing: border-box;
+  font-family: 'Rouge Script', cursive;
 }
 
 p {
@@ -10,32 +10,35 @@ p {
 }
 
 body {
-    display: grid;
-    grid-template-columns: 300px 1fr 300px;
-    grid-template-rows: 75px 1fr 50px;
-    background-color: rgb(50, 141, 50);
-    min-height: 100vh; 
+  display: grid;
+  grid-template-columns: 300px 1fr 300px;
+  grid-template-rows: 75px 1fr auto 0px;
+  background-color: rgb(50, 141, 50);
+  min-height: 100vh; 
+  margin-bottom: 0px;
 }
 
 h1 {
-    font-size: 50px;
-    grid-column: 2;
-    justify-self: center;
-    margin: 5px 0px;
-    padding: 0px;
-    font-family: 'Great Vibes', cursive;
-    animation: fadeInDown;
-    animation-duration: 1s;
+  font-size: 50px;
+  grid-column: 2;
+  text-align: center;
+  justify-self: center;
+  margin: 5px 0px;
+  padding: 0px;
+  font-family: 'Great Vibes', cursive;
+  animation: fadeInDown;
+  animation-duration: 1s;
+  width: 300px;
 }
 
 #main-board {
-    display: grid;
-    grid-column: 2;
-    grid-row: 2;
-    margin: 0 2px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: grid;
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #main-board > p {
@@ -43,14 +46,14 @@ h1 {
 }
 
 #left-board, #right-board {
-    display: grid;
-    align-content: start;
-    grid-row: 1 / span 2;
-    border: 4px solid rgb(31, 18, 5);
-    box-shadow: 4px 4px 4px 2px black;
-    background-image: url("../assets/backgrounds/wood.png");
-    border-image-repeat: repeat;
-    margin: 0 10px;
+  display: grid;
+  align-content: start;
+  grid-row: 1 / span 2;
+  border: 4px solid rgb(31, 18, 5);
+  box-shadow: 4px 4px 4px 2px black;
+  background-image: url("../assets/backgrounds/wood.png");
+  border-image-repeat: repeat;
+  margin: 0 10px;
 }
 
 #left-board > p {
@@ -61,18 +64,18 @@ h1 {
 }
 
 #left-board {
-    grid-column: 1;
-    padding: 1vmin;
-    animation: fadeInLeft;
-    animation-duration: 1s;
+  grid-column: 1;
+  padding: 1vmin;
+  animation: fadeInLeft;
+  animation-duration: 1s;
 }
 
 #right-board {
-    grid-column: 3;
-    padding: 1vmin;
-    position: relative;
-    animation: fadeInRight;
-    animation-duration: 1s;    
+  grid-column: 3;
+  padding: 1vmin;
+  position: relative;
+  animation: fadeInRight;
+  animation-duration: 1s;    
 }
 
 #right-board > #scores-header {
@@ -106,7 +109,7 @@ h1 {
   color: white;
   padding: 20px;
   animation: flash;
-  animation-delay: 2s;
+  animation-delay: 4s;
   animation-duration: 1s; 
 }
 
@@ -137,36 +140,36 @@ h1 {
 }
 
 #chips {
-    display: flex;
-    flex-wrap: wrap;
-    padding-bottom: 2vmin;
-    padding-top: 2vmin;
+  display: flex;
+  flex-wrap: wrap;
+  padding-bottom: 2vmin;
+  padding-top: 2vmin;
 }
 
 #buttons-below-chips {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 #players-cards > div, #dealers-cards > div{
-    height: 200px;
-    width: 150px;
-    border: 1px solid black;
-    margin: 0;
+  height: 200px;
+  width: 150px;
+  border: 1px solid black;
+  margin: 0;
 }
 
 #dealers-cards {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 2vmin;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2vmin;
 }
 
 #players-cards {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 2vmin;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2vmin;
 }
 
 .card-shadow {
@@ -174,24 +177,24 @@ h1 {
 }
 
 #pot {
-    display: grid;
-    grid-template-columns: 1fr;
-    border-radius: 50%;
-    vertical-align: middle;
+  display: grid;
+  grid-template-columns: 1fr;
+  border-radius: 50%;
+  vertical-align: middle;
 }
 
 #money-text {
-    font-size: 75px;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    padding: 1vmin 0;
-    font-family: 'Tangerine', cursive;
-    font-weight: 500;
+  font-size: 75px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  padding: 1vmin 0;
+  font-family: 'Tangerine', cursive;
+  font-weight: 500;
 }
 
 #deal-button {
-    background-color: rgb(42, 8, 65);
+  background-color: rgb(42, 8, 65);
 }
 
 #deal-button:hover {
@@ -199,12 +202,12 @@ h1 {
 }
 
 #play-again-button {
-    background-color: rgb(42, 8, 65);
-    position: absolute;
-    bottom: 0;
-    width: 75%;
-    justify-self: center;
-    margin-bottom: 1vmin;
+  background-color: rgb(42, 8, 65);
+  position: absolute;
+  bottom: 0;
+  width: 75%;
+  justify-self: center;
+  margin-bottom: 1vmin;
 }
 
 #play-again-button:hover {
@@ -212,40 +215,40 @@ h1 {
 }
 
 .gameplay-button {
-    padding: 1vmin;
-    background-color: rgb(0, 0, 136);
-    border-radius: 25%;
-    color: whitesmoke;
-    min-width: 12vmin;
-    min-height: 8vmin;
-    font-size: x-large;
-    font-family: 'Cookie', cursive;
-    box-shadow: 4px 4px 4px 2px black;
-    margin: 3px;
+  padding: 1vmin;
+  background-color: rgb(0, 0, 136);
+  border-radius: 25%;
+  color: whitesmoke;
+  min-width: 12vmin;
+  min-height: 8vmin;
+  font-size: x-large;
+  font-family: 'Cookie', cursive;
+  box-shadow: 4px 4px 4px 2px black;
+  margin: 3px;
 }
 
 .gameplay-button:hover {
-    background-color: rgb(35, 35, 218);
-    cursor: pointer;
+  background-color: rgb(35, 35, 218);
+  cursor: pointer;
 }
 
 #gameplay-buttons-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2vmin;
-    margin: 2vmin;
-    justify-self: center;
-    margin-bottom: 0px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2vmin;
+  margin: 2vmin;
+  justify-self: center;
+  margin-bottom: 0px;
 }
 
 #chips > button {
-    border-radius: 100%;
-    background-color: none;
-    border: none; 
-    width: 11vmin;
-    height: 11vmin;
-    margin: 5px;
-    box-shadow: 4px 4px 4px 2px black;
+  border-radius: 100%;
+  background-color: none;
+  border: none; 
+  width: 11vmin;
+  height: 11vmin;
+  margin: 5px;
+  box-shadow: 4px 4px 4px 2px black;
 }
 
 #chip-value5 {
@@ -299,25 +302,47 @@ h1 {
 }
 
 #screen-bottom {
-  grid-column: 2;
+  display: grid;
+  grid-column: 1 / span 3;
+  margin: 10px;
+  margin-bottom: 0px;
 }
 
-details {
-  margin: 20px;
-  padding: 10px;
-  font-size: xx-large;
-  user-select: none;
-
-}
-
-/* details>summary span.icon {
-  width: 24px;
-  height: 24px;
-  transition: all 0.3s;
-}  */
-
-summary {
+#screen-bottom > button {
   cursor: pointer;
+  font-size: xx-large;
+  width: 200px;
+  background-color: black;
+  color: white;
+  border-top-left-radius: 50%;
+  border-top-right-radius: 50%;
+  padding-top: 20px;
+  padding-bottom: 5px;
+  justify-self: left;
+  margin-top: 5px;
+}
+
+#how-to-play{
+  grid-column: 1 / span 2;
+  grid-row: 4;
+  background-color: black;
+  color: white;
+  border: 5px solid rgb(31, 18, 5);
+  padding: 5px 15px;
+  margin-bottom: 20px;
+  box-shadow: 4px 4px 4px 2px black;
+}
+
+.hide-how-to-play{
+  visibility: collapse;
+  height: 0px;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+}
+
+#how-to-play > ul {
+  font-size: xx-large;
 }
 
 /*---------------------------Cards-------------------------------*/
