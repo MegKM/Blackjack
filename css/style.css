@@ -345,6 +345,26 @@ h1 {
   font-size: xx-large;
 }
 
+#audioControls{
+  grid-column: 3;
+  /* color: black; */
+  height: 30px;
+}
+
+#play-button, #pause-button, #next-song-button{
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 45px;
+  width: 50px;
+  background-color: black;
+}
+
+i {
+  font-size: 35px;
+  justify-content: center;
+  color: white;
+} 
+
 /*---------------------------Cards-------------------------------*/
 
 

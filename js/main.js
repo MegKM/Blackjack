@@ -6,16 +6,27 @@ const sounds = {
     'dealCard': 'assets/sounds/card-dealt.mp3',
     'shuffleDeck': 'assets/sounds/deck-shuffled.wav',
     'pokerChip': 'assets/sounds/poker-chip.wav',
-     'allInChips': 'assets/sounds/all-in.wav',
-    'success': 'assets/sounds/success.wav'
+    'allInChips': 'assets/sounds/all-in.wav',
+    'success': 'assets/sounds/success.wav',
+}
+
+const music = {
+    'upbeat': 'assets/sounds/upbeat.wav',
+    'adventure': 'assets/sounds/adventure.wav',
+    'calming': 'assets/sounds/calming.mp3',
 }
 
 const audioPlayer = new Audio();
+const musicPlayer = new Audio();
 
 /*----- state variables -----*/
 let currentPot = 0;
 let currentBank = 1000;
 let cards = '';
+let adventureMusic = true;
+let calmingMusic = false;
+let upbeatMusic = false;
+
 
 const playersHand = [];
 const dealersHand = [];
@@ -84,6 +95,12 @@ const instructionElements = {
     howToPlayButton: document.getElementById('how-to-play-button'),
 }
 
+const audioElements = {
+    playButton: document.getElementById('play-button'),
+    pauseButton: document.getElementById('pause-button'),
+    nextSongButton: document.getElementById('next-song-button')
+}
+
 /*----- event listeners -----*/
 function activateBettingEventListerners(){
     chipElements.chipValue05.addEventListener('click', moveMoney);
@@ -108,6 +125,10 @@ function activatePlayAgainButton(){
 }
 
 instructionElements.howToPlayButton.addEventListener('click', toggleVisbility);
+
+audioElements.playButton.addEventListener('click', playMusic);
+audioElements.pauseButton.addEventListener('click', stopMusic);
+audioElements.nextSongButton.addEventListener('click', nextSong);
 
 /*----- functions -----*/
 init()
@@ -186,7 +207,7 @@ function allIn(){
 //Allowed the original setTimout calls to be replaced with a 'sleep' function.
 async function sleep(milliseconds){
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
-};
+}
 
 //Deal the first four cards, two each to player and dealer keeping the 2nd dealer card hidden.
 async function dealCards(){
@@ -199,8 +220,8 @@ async function dealCards(){
     removeBettingEventListerners();
     //Hides first round instruction in left panal and shows in main game board.
     if(firstGameShowInstructions){
-    instructionElements.startHand.setAttribute("style", "visibility: hidden");
-    instructionElements.playHand.setAttribute("style", "visibility: visible");
+        instructionElements.startHand.setAttribute("style", "visibility: hidden");
+        instructionElements.playHand.setAttribute("style", "visibility: visible");
     }
     //Deals cards to player and dealer, add them to new dedicated arrays and running totals.
     await sleep(sleepAmount);
@@ -247,7 +268,7 @@ async function dealCards(){
     playerHasBlackjack = checkIfBlackjack(playersHand);
 
     await sleep(sleepAmount);
-    if (playerHasBlackjack && dealerHasBlackjack || playerHasBlackjack && !dealerHasBlackjack){
+    if(playerHasBlackjack && dealerHasBlackjack || playerHasBlackjack && !dealerHasBlackjack){
         audioPlayer.src = sounds.dealCard;
         audioPlayer.play();
         dealersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
@@ -263,11 +284,11 @@ async function dealCards(){
         activateGameplayEventListerners();
     }
         
-};
+}
 
 //Can only be played on 3rd card. Doubles pot, updates ongoing totals then continues with normal gameplay.
 function double(){
-    if (playersHand.length < 3 && currentBank >= (currentPot * 2)){
+    if(playersHand.length < 3 && currentBank >= (currentPot * 2)){
         playersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
         currentPot *= 2;
         moneyElements.potElement.innerText = currentPot;
@@ -280,32 +301,32 @@ function double(){
         removeGameplayEventListeners();
         dealerTakesCard();
     }
-};
+}
 
 //When player presses 'Hit': checks for next available card slot, adds card.  Moves to dealers turn once all 5 slots are full.
 function playerTakesCard(){
-    if (playersHand.length < 3){
+    if(playersHand.length < 3){
         playersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
         playersRunningTotal = addCard(playersHand); 
         if(playersRunningTotal > 21){
-            roundOver()
-        };
+            roundOver();
+        }
         updatePlayersOnScreenScore();
     }
-    else if (playersHand.length < 4){
+    else if(playersHand.length < 4){
         playersCards.fourth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
         playersRunningTotal = addCard(playersHand); 
         if(playersRunningTotal > 21){
-            roundOver()
-        };
+            roundOver();
+        }
         updatePlayersOnScreenScore();
     }
-    else if (playersHand.length < 5){
+    else if(playersHand.length < 5){
         playersCards.fifth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
         playersRunningTotal = addCard(playersHand); 
         if(playersRunningTotal > 21){
-            roundOver()
-        };
+            roundOver();
+        }
         updatePlayersOnScreenScore();
     }
     else{
@@ -318,23 +339,25 @@ function playerTakesCard(){
 async function dealerTakesCard(){
     let sleepAmount = 500;
     await sleep(sleepAmount);
-    audioPlayer.src = sounds.dealCard
+    audioPlayer.src = sounds.dealCard;
     audioPlayer.play();
     dealersCards.second.setAttribute("class", `card large ${cards[3].face} card-shadow`);
     updateDealersOnScreenScore();
 
-    if(dealerHasBlackjack && dealersHand.length < 3){roundOver();}
+    if(dealerHasBlackjack && dealersHand.length < 3){
+        roundOver();
+    }
     if(dealersRunningTotal > playersRunningTotal && dealersRunningTotal <= 21){
         roundOver();
     }
-    else {
+    else{
         await sleep(sleepAmount);
         if(dealersRunningTotal < dealerRestsAmount && dealersRunningTotal <= playersRunningTotal){
             dealersCards.third.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
             dealersRunningTotal = addCard(dealersHand);
             if(dealersRunningTotal > 21){
-                roundOver()
-            };
+                roundOver();
+            }
             updateDealersOnScreenScore();               
 
             await sleep(sleepAmount);
@@ -342,8 +365,8 @@ async function dealerTakesCard(){
                 dealersCards.fourth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
                 dealersRunningTotal = addCard(dealersHand);
                 if(dealersRunningTotal > 21){
-                    roundOver()
-                };
+                    roundOver();
+                }
                 updateDealersOnScreenScore();
 
                 await sleep(sleepAmount);
@@ -351,15 +374,21 @@ async function dealerTakesCard(){
                     dealersCards.fifth.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
                     dealersRunningTotal = addCard(dealersHand);
                     if(dealersRunningTotal > 21){
-                        roundOver()
-                    };
+                        roundOver();
+                    }
                     updateDealersOnScreenScore();
                     roundOver();
-                }else{roundOver()};
-            }else{roundOver()};
-        }else{roundOver()};
-    };    
-};
+                }else{
+                    roundOver();
+                }
+            }else{
+                roundOver();
+            }
+        }else{
+            roundOver();
+        }
+    }   
+}
 
 //Takes array and sees if total is blackjack.
 function checkIfBlackjack(array){
@@ -374,7 +403,7 @@ function checkIfBlackjack(array){
 
 //Updates the given array and running total, check if bust occured factoring in aces being 1 or 11.
 function addCard(array){
-    audioPlayer.src = sounds.dealCard
+    audioPlayer.src = sounds.dealCard;
     audioPlayer.play();
     array.push(cards[totalCardsPlayed].value);
     let runningTotal = array.reduce((acc, num) => acc + num);
@@ -414,7 +443,7 @@ function roundOver(){
             displayElements.playersResult.innerText = "You have blackjack!";
             displayElements.gameResult.innerHTML = `Dealer pays triple: ${currentPot * 3}`;
             audioPlayer.src = sounds.success;
-            audioPlayer.volume *= 0.75
+            audioPlayer.volume *= 0.75;
             audioPlayer.play();
             countupCurrentBank((currentPot*3));
             countdownCurrentPot();
@@ -432,7 +461,7 @@ function roundOver(){
             displayElements.playersResult.innerText = "You win!";
             displayElements.gameResult.innerHTML = `You won ${winnings}!`;
             audioPlayer.src = sounds.success;
-            audioPlayer.volume *= 0.75
+            audioPlayer.volume *= 0.75;
             audioPlayer.play();
             countupCurrentBank(winnings);
             countdownCurrentPot();
@@ -472,8 +501,8 @@ function roundOver(){
             gameIsInPlay = false; 
         }    
         if(firstGameShowInstructions){
-        instructionElements.playHand.setAttribute("style", "visibility: hidden");
-        instructionElements.newHand.setAttribute("style", "visibility: visible");
+            instructionElements.playHand.setAttribute("style", "visibility: hidden");
+            instructionElements.newHand.setAttribute("style", "visibility: visible");
         }
         setTimeout(activatePlayAgainButton, 1000);
     }
@@ -498,7 +527,7 @@ function countdownCurrentPot(){
     const intervalID = setInterval(timer, time);
     function timer(){
         if(currentPot > 0){
-            if (currentPot > 300){
+            if(currentPot > 300){
                 currentPot -=10;
             }
             else{
@@ -520,7 +549,7 @@ function countupCurrentBank(winnings){
     function timer(){
         if(currentBank < newBankAmount){
             if(newBankAmount > 300){
-                currentBank += 10
+                currentBank += 10;
             } else{
                 currentBank += 1;
             }            
@@ -569,6 +598,45 @@ function updateDealersOnScreenScore(){
 //Shows the "how to play" instructions when button clicked.
 function toggleVisbility(){
     instructionElements.howToPlay.classList.toggle("hide-how-to-play");
+}
+
+//When the play button is clicked music starts to play independantly to the sound effects audio
+function playMusic(){
+    musicPlayer.src = music.adventure;
+    musicPlayer.volume = 0.5;
+    musicPlayer.play();
+    musicPlayer.loop = true;
+}
+
+//Pause button stops the music
+function stopMusic(){
+    musicPlayer.pause();
+}
+
+//Arrow botton changes the music to the next track
+function nextSong(){
+    musicPlayer.pause();
+    if(adventureMusic){
+        musicPlayer.src = music.calming;
+        musicPlayer.volume = 1;
+        musicPlayer.play();
+        calmingMusic = true;
+        adventureMusic = false;
+    }
+    else if (calmingMusic){
+        musicPlayer.src = music.upbeat;
+        musicPlayer.volume = 0.4;
+        musicPlayer.play();
+        calmingMusic = false;
+        upbeatMusic = true;
+    }
+    else{
+        musicPlayer.src = music.adventure;
+        musicPlayer.volume = 0.5;
+        musicPlayer.play();
+        upbeatMusic = false;
+        adventureMusic = true;
+    }
 }
 
 //Resets applicable variables without resetting the bank balance when the 'Play again' button is clicked.

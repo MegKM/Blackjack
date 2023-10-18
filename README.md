@@ -58,6 +58,7 @@ It is currently only possible to be dealt 5 cards each for both the dealer and t
 ## Next Steps
 * There is no 'split' function.  In traditional Blackjack, if the player is dealt two of the same value card they have the option to 'split' the cards and play each as a separate hand.
 * Add the possibility of drawing more than 5 cards for both the dealer and the player.
+* Add media queries so the game scales well on smaller screens.
 
 
 
