@@ -157,6 +157,8 @@ function buildDeck () {
     return shuffled;
 }
 
+//-----------------------------Buttons/functions in left hand panel---------------------------//
+
 //Moves money from bank to pot depending on chip value clicked.
 function moveMoney(event){
     audioPlayer.pause();
@@ -206,6 +208,8 @@ function allIn(){
     moneyElements.bankElement.innerText = currentBank;
 }
 
+//-----------------------------Inital set up of game (deal cards)---------------------------//
+
 //Allowed the original setTimout calls to be replaced with a 'sleep' function.
 async function sleep(milliseconds){
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -227,25 +231,19 @@ async function dealCards(){
     }
     //Deals cards to player and dealer, add them to new dedicated arrays and running totals.
     await sleep(sleepAmount);
-    audioPlayer.pause();
-    audioPlayer.src = sounds.dealCard;
-    audioPlayer.play();    
+    playDealCardAudio()   
     playersCards.first.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
     playersHand.push(cards[totalCardsPlayed].value);
     totalCardsPlayed += 1;
 
     await sleep(sleepAmount);
-    audioPlayer.pause();
-    audioPlayer.src = sounds.dealCard;
-    audioPlayer.play();
+    playDealCardAudio()
     dealersCards.first.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
     dealersHand.push(cards[totalCardsPlayed].value);
     totalCardsPlayed += 1;
  
     await sleep(sleepAmount);
-    audioPlayer.pause();
-    audioPlayer.src = sounds.dealCard;
-    audioPlayer.play();
+    playDealCardAudio()
     playersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
     playersHand.push(cards[totalCardsPlayed].value);
     playersRunningTotal = checkIfBust(playersHand);    
@@ -260,9 +258,7 @@ async function dealCards(){
         cardSuit= "back-red";
     };
 
-    audioPlayer.pause();
-    audioPlayer.src = sounds.dealCard;
-    audioPlayer.play();
+    playDealCardAudio()
     dealersCards.second.setAttribute("class", `card large ${cardSuit} card-shadow`);
     dealersHand.push(cards[totalCardsPlayed].value);
     dealersRunningTotal = checkIfBust(dealersHand);
@@ -275,9 +271,7 @@ async function dealCards(){
 
     await sleep(sleepAmount);
     if(playerHasBlackjack && dealerHasBlackjack || playerHasBlackjack && !dealerHasBlackjack){
-        audioPlayer.pause();
-        audioPlayer.src = sounds.dealCard;
-        audioPlayer.play();
+        playDealCardAudio()
         dealersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
         updateDealersOnScreenScore();
         if(firstGameShowInstructions){
@@ -292,6 +286,8 @@ async function dealCards(){
     }
         
 }
+
+//-----------------------------Main gamplay buttons (Double/Stand/Hit)-------------------------------//
 
 //Can only be played on 3rd card. Doubles pot, updates ongoing totals then continues with normal gameplay.
 function double(){
@@ -308,6 +304,11 @@ function double(){
         removeGameplayEventListeners();
         dealerTakesCard();
     }
+}
+
+//Moves gameplay from player to dealer.
+function playerStands(){
+    dealerTakesCard();
 }
 
 //When player presses 'Hit': checks for next available card slot, adds card.  Moves to dealers turn once all 5 slots are full.
@@ -342,13 +343,13 @@ function playerTakesCard(){
     }
 };
 
+//------------------------------------Dealer's turn-------------------------------------------//
+
 //Same as playerTakesCard above but set to timers.  Function exits when dealer hits 17, 21, total is higher than player or dealer busts. 
 async function dealerTakesCard(){
     let sleepAmount = 500;
     await sleep(sleepAmount);
-    audioPlayer.pause();
-    audioPlayer.src = sounds.dealCard;
-    audioPlayer.play();
+    playDealCardAudio()
     dealersCards.second.setAttribute("class", `card large ${cards[3].face} card-shadow`);
     updateDealersOnScreenScore();
 
@@ -398,6 +399,8 @@ async function dealerTakesCard(){
     }   
 }
 
+//----------------------------Blackjack/bust/aces 1 or 11 functions---------------------------------//
+
 //Takes array and sees if total is blackjack.
 function checkIfBlackjack(array){
     const totalPoints = array.reduce((acc, num) => acc + num);
@@ -411,9 +414,7 @@ function checkIfBlackjack(array){
 
 //Updates the given array and running total, check if bust occured factoring in aces being 1 or 11.
 function addCard(array){
-    audioPlayer.pause();
-    audioPlayer.src = sounds.dealCard;
-    audioPlayer.play();
+    playDealCardAudio()
     array.push(cards[totalCardsPlayed].value);
     let runningTotal = array.reduce((acc, num) => acc + num);
     if(runningTotal > 21){
@@ -437,7 +438,9 @@ function checkIfBust(array){
     return runningTotal;
 }
 
-//Determins the winner of the hand, displays the results on screen, moves money accordinly
+//-------------------------------Determine the winner---------------------------------------//
+
+//Determines the winner of the hand, displays the results on screen, moves money accordinly
 function roundOver(){
     if(gameIsInPlay === true){
         //Prevents gameplay buttons from being clicked after round is over.
@@ -511,6 +514,8 @@ function roundOver(){
     }
 }
 
+//-----------------------------"Animations" and sounds of the game--------------------------------//
+
 //"Animation" when money moves from pot.   
 function countdownCurrentPot(){
     let time = 1000 / (currentPot % 100);
@@ -558,29 +563,12 @@ function playSuccessAudio(){
     audioPlayer.play();
 }
 
-//Ensure betting can't happen when round is already in play
-function removeBettingEventListerners(){
-    buttonElements.allInButton.removeEventListener('click', allIn);
-    buttonElements.clearBetButton.removeEventListener('click', clearBet);
-    buttonElements.dealButton.removeEventListener('click', dealCards);
-    chipElements.chipValue05.removeEventListener('click', moveMoney);
-    chipElements.chipValue10.removeEventListener('click', moveMoney);
-    chipElements.chipValue25.removeEventListener('click', moveMoney);
-    chipElements.chipValue50.removeEventListener('click', moveMoney);
-    chipElements.chipValue100.removeEventListener('click', moveMoney);
-};
-
-//Ensure more cards can't be added once round is over.
-function removeGameplayEventListeners(){
-    buttonElements.hitButton.removeEventListener('click', playerTakesCard);
-    buttonElements.doubleButton.removeEventListener('click', double);
-    buttonElements.standButton.removeEventListener('click', playerStands);
+function playDealCardAudio(){
+    audioPlayer.pause();
+    audioPlayer.src = sounds.dealCard;
+    audioPlayer.play();
 }
 
-//Moves gameplay from player to dealer.
-function playerStands(){
-    dealerTakesCard();
-}
 
 //Updates the running total for the player on screen.
 function updatePlayersOnScreenScore(){
@@ -636,6 +624,31 @@ function nextSong(){
     }
 }
 
+//-----------------------------Disable buttons when not in use--------------------------------//
+
+//Ensure betting can't happen when round is already in play
+function removeBettingEventListerners(){
+    buttonElements.allInButton.removeEventListener('click', allIn);
+    buttonElements.clearBetButton.removeEventListener('click', clearBet);
+    buttonElements.dealButton.removeEventListener('click', dealCards);
+    chipElements.chipValue05.removeEventListener('click', moveMoney);
+    chipElements.chipValue10.removeEventListener('click', moveMoney);
+    chipElements.chipValue25.removeEventListener('click', moveMoney);
+    chipElements.chipValue50.removeEventListener('click', moveMoney);
+    chipElements.chipValue100.removeEventListener('click', moveMoney);
+};
+
+//Ensure more cards can't be added once round is over.
+function removeGameplayEventListeners(){
+    buttonElements.hitButton.removeEventListener('click', playerTakesCard);
+    buttonElements.doubleButton.removeEventListener('click', double);
+    buttonElements.standButton.removeEventListener('click', playerStands);
+}
+
+
+//-----------------------------------Gameover and Play again-------------------------------------//
+
+
 //Checks is the player has run out of money, changes 'Play again' to 'Reset game'.  Refreshes the page.
 function checkIfGameOver(){
     if(currentBank === 0){
@@ -688,3 +701,5 @@ function playAgain(){
 
     init();
 }
+
+//------------------------------------------------------------------------------------------------------//
