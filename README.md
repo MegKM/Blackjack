@@ -51,9 +51,12 @@ The following outcomes apply when the dealer, player or both get dealt Blackjack
 * CardStarter CSS Library
 
 ## Known bugs
+<img style="float: right;" src="gameplay-screenshots/works-on-my-machine.png">
 It is currently only possible to be dealt 5 cards each for both the dealer and the player.  It's unlikely, but possible, that you could reach 5 cards without going bust and want to be dealt another.  This is prevented by the main gameplay buttons going inactive (and for the dealer it just jumps ahead to the winner calculation code block).
 
 "Uncaught (in promise) DOMException error" is occasion triggered by audio files playing on top of each other.
+
+
 
 ## Next Steps
 * There is no 'split' function.  In traditional Blackjack, if the player is dealt two of the same value card they have the option to 'split' the cards and play each as a separate hand.

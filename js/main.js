@@ -159,6 +159,7 @@ function buildDeck () {
 
 //Moves money from bank to pot depending on chip value clicked.
 function moveMoney(event){
+    audioPlayer.pause();
     audioPlayer.src = sounds.pokerChip;
     audioPlayer.play();
     if(event.target === chipElements.chipValue05 && currentBank >= 5){
@@ -196,6 +197,7 @@ function clearBet(){
 
 //Move all money in bank to pot when 'All in' button is clicked.
 function allIn(){
+    audioPlayer.pause();
     audioPlayer.src = sounds.allInChips;
     audioPlayer.play();
     currentPot += currentBank;
@@ -225,6 +227,7 @@ async function dealCards(){
     }
     //Deals cards to player and dealer, add them to new dedicated arrays and running totals.
     await sleep(sleepAmount);
+    audioPlayer.pause();
     audioPlayer.src = sounds.dealCard;
     audioPlayer.play();    
     playersCards.first.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
@@ -232,6 +235,7 @@ async function dealCards(){
     totalCardsPlayed += 1;
 
     await sleep(sleepAmount);
+    audioPlayer.pause();
     audioPlayer.src = sounds.dealCard;
     audioPlayer.play();
     dealersCards.first.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
@@ -239,6 +243,7 @@ async function dealCards(){
     totalCardsPlayed += 1;
  
     await sleep(sleepAmount);
+    audioPlayer.pause();
     audioPlayer.src = sounds.dealCard;
     audioPlayer.play();
     playersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
@@ -255,6 +260,7 @@ async function dealCards(){
         cardSuit= "back-red";
     };
 
+    audioPlayer.pause();
     audioPlayer.src = sounds.dealCard;
     audioPlayer.play();
     dealersCards.second.setAttribute("class", `card large ${cardSuit} card-shadow`);
@@ -269,6 +275,7 @@ async function dealCards(){
 
     await sleep(sleepAmount);
     if(playerHasBlackjack && dealerHasBlackjack || playerHasBlackjack && !dealerHasBlackjack){
+        audioPlayer.pause();
         audioPlayer.src = sounds.dealCard;
         audioPlayer.play();
         dealersCards.second.setAttribute("class", `card large ${cards[totalCardsPlayed].face} card-shadow`);
@@ -339,6 +346,7 @@ function playerTakesCard(){
 async function dealerTakesCard(){
     let sleepAmount = 500;
     await sleep(sleepAmount);
+    audioPlayer.pause();
     audioPlayer.src = sounds.dealCard;
     audioPlayer.play();
     dealersCards.second.setAttribute("class", `card large ${cards[3].face} card-shadow`);
@@ -403,6 +411,7 @@ function checkIfBlackjack(array){
 
 //Updates the given array and running total, check if bust occured factoring in aces being 1 or 11.
 function addCard(array){
+    audioPlayer.pause();
     audioPlayer.src = sounds.dealCard;
     audioPlayer.play();
     array.push(cards[totalCardsPlayed].value);
@@ -442,9 +451,7 @@ function roundOver(){
         else if(playerHasBlackjack && !dealerHasBlackjack){
             displayElements.playersResult.innerText = "You have blackjack!";
             displayElements.gameResult.innerHTML = `Dealer pays triple: ${currentPot * 3}`;
-            audioPlayer.src = sounds.success;
-            audioPlayer.volume *= 0.75;
-            audioPlayer.play();
+            playSuccessAudio();
             countupCurrentBank((currentPot*3));
             countdownCurrentPot();
         }
@@ -460,9 +467,7 @@ function roundOver(){
             displayElements.dealersResult.innerText = "Dealer bust.";
             displayElements.playersResult.innerText = "You win!";
             displayElements.gameResult.innerHTML = `You won ${winnings}!`;
-            audioPlayer.src = sounds.success;
-            audioPlayer.volume *= 0.75;
-            audioPlayer.play();
+            playSuccessAudio();
             countupCurrentBank(winnings);
             countdownCurrentPot();
             gameIsInPlay = false; 
@@ -479,9 +484,7 @@ function roundOver(){
             displayElements.dealersResult.innerHTML = `Dealer rests on ${dealersRunningTotal}.`;
             displayElements.playersResult.innerText = "You win!";
             displayElements.gameResult.innerHTML = `You won ${winnings}.`;
-            audioPlayer.src = sounds.success;
-            audioPlayer.volume *= 0.75
-            audioPlayer.play();
+            playSuccessAudio();
             countupCurrentBank(winnings);
             countdownCurrentPot();
             gameIsInPlay = false; 
@@ -559,6 +562,13 @@ function countupCurrentBank(winnings){
             clearInterval(intervalID);
         }
     }
+}
+
+function playSuccessAudio(){
+    audioPlayer.pause();
+    audioPlayer.src = sounds.success;
+    audioPlayer.volume *= 0.75
+    audioPlayer.play();
 }
 
 //Ensure betting can't happen when round is already in play
