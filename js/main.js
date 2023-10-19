@@ -511,19 +511,6 @@ function roundOver(){
     }
 }
 
-//Checks is the player has run out of money, changes 'Play again' to 'Reset game'.  Refreshes the page.
-function checkIfGameOver(){
-    if(currentBank === 0){
-        buttonElements.playAgainButton.removeEventListener("click", playAgain);
-        buttonElements.playAgainButton.addEventListener("click", refreshPage);
-        buttonElements.playAgainButton.innerText = "Click to restart game";
-
-        function refreshPage(){
-            location.reload();
-        }
-    }
-}
-
 //"Animation" when money moves from pot.   
 function countdownCurrentPot(){
     let time = 1000 / (currentPot % 100);
@@ -646,6 +633,24 @@ function nextSong(){
         musicPlayer.play();
         upbeatMusic = false;
         adventureMusic = true;
+    }
+}
+
+//Checks is the player has run out of money, changes 'Play again' to 'Reset game'.  Refreshes the page.
+function checkIfGameOver(){
+    if(currentBank === 0){
+        buttonElements.playAgainButton.removeEventListener("click", playAgain);
+        buttonElements.playAgainButton.addEventListener("click", refreshPage);
+        buttonElements.playAgainButton.innerText = "Click to restart game";
+
+        function refreshPage(){
+            currentBank = 1000;
+            moneyElements.bankElement.innerText = currentBank;
+            buttonElements.playAgainButton.removeEventListener("click", refreshPage);
+            buttonElements.playAgainButton.addEventListener("click", playAgain);
+            buttonElements.playAgainButton.innerText = "Play again";
+            playAgain();
+        }
     }
 }
 
